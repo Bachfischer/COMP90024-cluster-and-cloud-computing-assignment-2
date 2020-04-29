@@ -1,5 +1,6 @@
 import tweepy
 import json
+import time
 
 #get api keys stored in api_keys.txt
 def get_api_keys():
@@ -10,7 +11,9 @@ def get_api_keys():
 		if line_count==0:
 			line_count+=1
 		else:
-			apis.append(line.split(','))
+			keys=line.split(',')
+			keys=[key.strip() for key in keys]
+			apis.append(keys)
 	return apis
 
 
@@ -34,8 +37,8 @@ count=0
 
 print(num_of_auths)
 
+last_tweet_id=None
 while True:
-	last_tweet_id=None
 	try:
 		tweet=tweets.next()
 		last_tweet_id=tweet.id
@@ -43,13 +46,17 @@ while True:
 		if count%100==0:
 			print(count)
 
-	except tweepy.RateLimitError:
-		print("changing Auth tokens")
-		authID=int((authID+1)%num_of_auths)
-		currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,lang="en",max_id=last_tweet_id-1,cursor = currentCursor)
-		tweets=currentCursor.items()
-
 	except tweepy.TweepError as e:
-		print(e)
-		break
+		if e.args[0].split(" = " )[1]=="429" :
+			print("changing Auth tokens")
+			if authID>0 and int((authID)%num_of_auths)==0:
+				time.sleep(300)
+			authID=int((authID+1)%num_of_auths)
+			print(authID)
+			print(last_tweet_id)
+			currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,lang="en",max_id=last_tweet_id-1)
+			tweets=currentCursor.items()
+	except StopIteration:
+		continue
+
 print(count)
