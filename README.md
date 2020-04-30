@@ -7,3 +7,7 @@ Source code for assignment 2 of University of Melbourne COMP90024 Cluster and Cl
 * `doc/` -- Documentation and implementation notes
 * `playground/` -- Random stuff
 * `src/` -- Source code for project
+
+## Notes
+
+Use "qh2-uom-internal" network provider when launching instances
