@@ -1,4 +1,3 @@
-import pandas as pd
 import geopandas as gpd
 import geopy
 from geopy.geocoders import Nominatim
@@ -9,6 +8,9 @@ import ssl
 ctx = ssl.create_default_context(cafile=certifi.where())
 geopy.geocoders.options.default_ssl_context = ctx
 geolocator = Nominatim(user_agent="climate change app", scheme='http')
-# INPUT latitude/long
-location = geolocator.reverse("-37.817403,144.956776")
-print (location.raw['address']['postcode'])
+
+# returns the postcode for the given longititude and latitude
+def get_postcode(long, lat):
+    gps_string = long + "," + lat
+    location = geolocator.reverse(gps_string)
+    return location.raw['address']['postcode']
