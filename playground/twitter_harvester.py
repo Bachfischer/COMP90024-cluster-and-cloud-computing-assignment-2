@@ -11,21 +11,23 @@ class FileWriter():
     def __init__(self, api):
         self.api = api
 
-    def write_tweets():
+    def write_tweets(self):
 
         file_name = 'twitter_data'+(datetime.datetime.now().strftime("%Y-%m-%d-%H"))+'.csv'
         with open (file_name, 'a+', newline='') as csvFile:
            csvWriter = csv.writer(csvFile)
 
-        for tweet in tweepy.Cursor(self.api.search, q= harvester_constants.SEARCH_KEYWORDS, \
-        lang = 'en', count=1000, tweet_mode='extended').items():
-            tweets_encoded = tweet.text.encode('utf-8')
-            tweets_decoded = tweets_encoded.decode('utf-8')
+           for tweet in tweepy.Cursor(self.api.search, q= harvester_constants.SEARCH_KEYWORDS, \
+           lang = 'en', count=1000, tweet_mode='extended').items():
+                tweets_encoded = tweet.full_text.encode('utf-8')
+                tweets_decoded = tweets_encoded.decode('utf-8')
 
-            csvWriter.writerow([datetime.datetime.now().strftime("%Y-%m-%d  %H:%M"), \
-            tweet.id, tweets_decoded, tweet.created_at, tweet.geo, \
-            tweet.place.name if tweet.place else None, tweet.coordinates, \
-            tweet._json["user"]["location"]])
+                csvWriter.writerow([datetime.datetime.now().strftime("%Y-%m-%d  %H:%M"), \
+                tweet.id, tweets_decoded, tweet.created_at, tweet.geo, \
+                tweet.place.name if tweet.place else None, tweet.coordinates, \
+                tweet._json["user"]["location"]])
+
+        print("Finished writing tweets to file")
 
 
 if __name__ == '__main__':
@@ -37,3 +39,5 @@ if __name__ == '__main__':
     api = tweepy.API(authenticator)
 
     file_writer = FileWriter(api)
+    print("Writing tweets to file")
+    file_writer.write_tweets()
