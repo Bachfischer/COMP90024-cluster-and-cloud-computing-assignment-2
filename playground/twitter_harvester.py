@@ -1,32 +1,39 @@
 import tweepy
-import json
+import json, datetime, csv
 import twitter_credentials
+import harvester_constants
 
 
-# This will print out the tweets that it receives
-class TweepyStream(tweepy.StreamListener):
+# writes the output from the twitter api to a file
+class FileWriter():
 
-    # loads JSON tweet and prints it out
-    def on_data(self, data):
-        tweet = json.loads(data)
-        print('@%s: %s' % (tweet['user']['screen_name'], tweet['text'].encode('ascii', 'ignore')))
+    # creates an array of tweets coming in
+    def __init__(self, api):
+        self.api = api
 
-    # prints out the error message
-    def on_error(self, status):
-        print(status)
+    def write_tweets():
+
+        file_name = 'twitter_data'+(datetime.datetime.now().strftime("%Y-%m-%d-%H"))+'.csv'
+        with open (file_name, 'a+', newline='') as csvFile:
+           csvWriter = csv.writer(csvFile)
+
+        for tweet in tweepy.Cursor(self.api.search, q= harvester_constants.SEARCH_KEYWORDS, \
+        lang = 'en', count=1000, tweet_mode='extended').items():
+            tweets_encoded = tweet.text.encode('utf-8')
+            tweets_decoded = tweets_encoded.decode('utf-8')
+
+            csvWriter.writerow([datetime.datetime.now().strftime("%Y-%m-%d  %H:%M"), \
+            tweet.id, tweets_decoded, tweet.created_at, tweet.geo, \
+            tweet.place.name if tweet.place else None, tweet.coordinates, \
+            tweet._json["user"]["location"]])
+
 
 if __name__ == '__main__':
-    listener = TweepyStream()
-
-    print('Print tweets:')
-
     # Authentication process
     authenticator = tweepy.OAuthHandler(twitter_credentials.API_KEY, \
     twitter_credentials.API_SECRET_KEY)
-
     authenticator.set_access_token(twitter_credentials.ACCESS_TOKEN, \
     twitter_credentials.ACCESS_TOKEN_SECRET)
+    api = tweepy.API(authenticator)
 
-    # Connect the stream to our listener
-    stream = tweepy.Stream(authenticator, listener)
-    stream.filter(track=['Climate Change'])
+    file_writer = FileWriter(api)
