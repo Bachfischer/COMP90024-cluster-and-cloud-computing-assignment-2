@@ -13,12 +13,14 @@ class FileWriter():
 
     def write_tweets(self):
 
-        file_name = 'twitter_data'+(datetime.datetime.now().strftime("%Y-%m-%d-%H"))+'.csv'
+        file_name = 'twitter_data'+(datetime.datetime.now().strftime("%Y-%m-%d-%H-%M"))+'.csv'
         with open (file_name, 'a+', newline='') as csvFile:
            csvWriter = csv.writer(csvFile)
 
+           print("Opened file named: " + file_name)
+
            for tweet in tweepy.Cursor(self.api.search, q= harvester_constants.SEARCH_KEYWORDS, \
-           lang = 'en', count=1000, tweet_mode='extended').items():
+           lang = 'en', count=400, tweet_mode='extended', geocode = "-37.817403,144.956776,50km").items():
                 tweets_encoded = tweet.full_text.encode('utf-8')
                 tweets_decoded = tweets_encoded.decode('utf-8')
 
