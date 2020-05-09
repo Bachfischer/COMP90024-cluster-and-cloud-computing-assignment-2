@@ -12,9 +12,10 @@ class FileWriter():
     def __init__(self, api):
         self.api = api
 
+    # writing tweets to the file from the API
     def write_tweets(self):
-
         file_name = 'twitter_data'+(datetime.datetime.now().strftime("%Y-%m-%d-%H-%M"))+'.csv'
+        
         with open (file_name, 'a+', newline='') as csvFile:
            csvWriter = csv.writer(csvFile)
            print("Opened file named: " + file_name)
@@ -46,6 +47,7 @@ if __name__ == '__main__':
     twitter_credentials.ACCESS_TOKEN_SECRET)
     api = tweepy.API(authenticator)
 
+    # getting tweets from the Twitter API
     file_writer = FileWriter(api)
     print("Writing tweets to file")
     file_writer.write_tweets()
