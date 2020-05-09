@@ -1,0 +1,11 @@
+- hosts: localhost
+  vars_files:
+    - host_vars/research_cloud.yaml
+  gather_facts: true
+
+  roles:
+# TODO: Remove openstack-common
+#    - role: openstack-common
+    - role: openstack-volume
+    - role: openstack-security-group
+    - role: openstack-instance
