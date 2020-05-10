@@ -6,7 +6,7 @@ import data_constants
 # loops through all of the aurin data and aggregates it into one dataframe
 def aggregate_aurin_data():
     data = pd.DataFrame()
-    for file_name in data_constants.files_array:
+    for file_name in data_constants.melb_file_names:
         year_data = open_file(file_name)
         if data.empty:
             data = data.append(year_data)
