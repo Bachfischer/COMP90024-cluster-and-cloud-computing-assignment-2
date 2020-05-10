@@ -16,13 +16,24 @@ def aggregate_aurin_data():
 
 # opens the given Aurin data file and reads the contents into a dataframe
 def open_file(file_name):
-    working_dir = os.getcwd()
-    file_location = glob.glob(working_dir + "/**/" + file_name, recursive = True)
+    file_location = find_file(file_name)
     data = pd.read_csv(file_location[0], sep = ',')
     data = data.set_index('postcode')
     return data
 
+# finds the given file name in whatever subdirectory it is in
+def find_file(file_name):
+    working_dir = os.getcwd()
+    file_location = glob.glob(working_dir + "/**/" + file_name, recursive = True)
+    return file_location
+
+# writes the given pandas dataframe to a csv file
+def write_to_csv(data, file_name):
+    aggregated_data.to_csv(file_name)
+
 # Main method
 if __name__ == "__main__":
     aggregated_data = aggregate_aurin_data()
-    print(aggregated_data.head())
+    
+    # uncomment if you want to write the aggregated data to a file
+    # write_to_csv(aggregated_data, "MelbAurinAggregated.csv")
