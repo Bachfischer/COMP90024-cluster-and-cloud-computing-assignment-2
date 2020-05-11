@@ -1,27 +1,8 @@
 import tweepy
 import json
 import time
+from support_functions import *
 
-#get api keys stored in api_keys.txt
-def get_api_keys():
-	f=open('api_keys.txt','r')
-	apis=[]
-	line_count=0
-	for line in f:
-		if line_count==0:
-			line_count+=1
-		else:
-			keys=line.split(',')
-			keys=[key.strip() for key in keys]
-			apis.append(keys)
-	return apis
-
-
-#generate auth objects
-def get_auth_object(keys):
-	auth=tweepy.OAuthHandler(keys[0],keys[1])
-	auth.set_access_token(keys[2],keys[3])
-	return tweepy.API(auth)
 
 
 auths=[get_auth_object(key_list) for key_list in get_api_keys()]
