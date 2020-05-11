@@ -28,10 +28,10 @@ auths=[get_auth_object(key_list) for key_list in get_api_keys()]
 
 num_of_auths=len(auths)
 
-authID=0
+authID=1
 
-search_term="climatechange" or "globalwarming"
-currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,lang="en")
+search_term="climate change"
+currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,geocode="-37.817403,144.956776,100km")
 tweets=currentCursor.items()
 count=0
 
@@ -49,12 +49,15 @@ while True:
 	except tweepy.TweepError as e:
 		if e.args[0].split(" = " )[1]=="429" :
 			print("changing Auth tokens")
-			if authID>0 and int((authID)%num_of_auths)==0:
-				time.sleep(300)
-			authID=int((authID+1)%num_of_auths)
+			if int((authID)%num_of_auths)==0:
+				#print("sleeping")
+				time.sleep(60*5)
+			authID=int((authID)%num_of_auths)+1
 			print(authID)
-			print(last_tweet_id)
-			currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,lang="en",max_id=last_tweet_id-1)
+			if last_tweet_id!=None:
+				currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,max_id=last_tweet_id-1,geocode="-37.817403,144.956776,50km")
+			else:
+				currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,geocode="-37.817403,144.956776,50km")
 			tweets=currentCursor.items()
 	except StopIteration:
 		continue
