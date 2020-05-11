@@ -1,1 +1,2 @@
 ---
+masternode: "{{ groups['TwitterMining'][0] }}"

@@ -6,6 +6,7 @@ volumes:
     mountpoint: /var/lib/docker
 
 # CouchDB configuration
+masternode: <<<TBD>>>
 user: admin
 pass: admin
 VERSION: '3.0.0'

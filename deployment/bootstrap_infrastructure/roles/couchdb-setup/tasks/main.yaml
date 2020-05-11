@@ -20,10 +20,9 @@
       COUCHDB_USER: "{{ user }}"
       COUCHDB_PASSWORD: "{{ pass }}"
       COUCHDB_SECRET: "{{ cookie }}"
-      ERL_FLAGS: "setcookie \"{{ cookie }}\" -name \"couchdb@{{ inventory_hostname }}\""\"
+      ERL_FLAGS: "setcookie \"{{ cookie }}\" -name \"couchdb@{{ inventory_hostname }}\""
 
-#TODO: nCheck Syntax for invoking curl web requests in loop
-#TODO: Check how to select masternode and pass to script
+
 - name: Add nodes to CouchDB cluster
   uri:
     url: http://{{ masternode }}:5984/_cluster_setup"
@@ -45,7 +44,7 @@
       remote_current_user: "{{ user }}"
       remote_current_password: "{{ pass }}"
 
-#TODO: Check Syntax for invoking curl web requests in loop
+
 - name: Join nodes to CouchDB cluster
   uri:
     url: http://{{ masternode }}:5984/_cluster_setup"

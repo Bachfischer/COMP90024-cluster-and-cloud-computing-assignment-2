@@ -57,11 +57,11 @@ instances:
   - name: cluster-server-01
     volumes: ['cluster-server-01-volume-data', 'cluster-server-01-volume-docker']
   - name: cluster-server-02
-    volumes: ['cluster-server-02-volume-data', 'cluster-server-01-volume-docker']
+    volumes: ['cluster-server-02-volume-data', 'cluster-server-02-volume-docker']
   - name: cluster-server-03
-    volumes: ['cluster-server-03-volume-data', cluster-server-01-volume-docker']
+    volumes: ['cluster-server-03-volume-data', cluster-server-03-volume-docker']
   - name: cluster-server-04
-    volumes: ['cluster-server-04-volume-data', 'cluster-server-01-volume-docker']
+    volumes: ['cluster-server-04-volume-data', 'cluster-server-03-volume-docker']
 
 instance_image: 215f9775-483c-4e0a-b703-d21a5c966f2e
 instance_key_name: cloud_unimelb_rsa
