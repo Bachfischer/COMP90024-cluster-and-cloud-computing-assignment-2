@@ -6,6 +6,7 @@
     user: "{{ user }}"
     password: "{{ pass }}"
     force_basic_auth: yes
+  run_once: true
 
 - name: Finish cluster setup
   uri:
@@ -19,3 +20,4 @@
     body_format: json
     body:       
       action: "finish_cluster"
+  run_once: true

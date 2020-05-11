@@ -1,5 +1,5 @@
 ---
-# Create an instance on NeCTAR
+# Create an instance on Unimelb Research Cloud
 - name: Create an instance
   os_server:
     name: '{{ item.name }}'
@@ -34,6 +34,6 @@
 - name: Add host
   add_host:
     name: '{{ item.openstack.public_v4 }}'
-    groups: COMP90024
+    groups: TwitterMining
   loop: '{{ os_instance.results }}'
   when: item.openstack is defined
