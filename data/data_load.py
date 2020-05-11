@@ -3,37 +3,60 @@ import pandas as pd
 import numpy as np
 import data_constants
 
-# loops through all of the aurin data and aggregates it into one dataframe
-def aggregate_aurin_data():
-    data = pd.DataFrame()
-    for file_name in data_constants.melb_file_names:
-        year_data = open_file(file_name)
-        if data.empty:
-            data = data.append(year_data)
-        else:
-            data = data.add(year_data)
-    return data
+# loads the data from aurin into a df and aggregated the data from 2001-2018
+def AurinDataLoad():
 
-# opens the given Aurin data file and reads the contents into a dataframe
-def open_file(file_name):
-    file_location = find_file(file_name)
-    data = pd.read_csv(file_location[0], sep = ',')
-    data = data.set_index('postcode')
-    return data
+    # the given area is the area the user wants to collect aurin data from
+    def __init__(self, area):
+        self.area = area.lower()
 
-# finds the given file name in whatever subdirectory it is in
-def find_file(file_name):
-    working_dir = os.getcwd()
-    file_location = glob.glob(working_dir + "/**/" + file_name, recursive = True)
-    return file_location
+    # loops through all of the aurin data and aggregates it into one dataframe
+    def aggregate_aurin_data(self):
+        data = pd.DataFrame()
+        file_names_array = find_file_names()
+        for file_name in file_names_array:
+            year_data = open_file(file_name)
+            if data.empty:
+                data = data.append(year_data)
+            else:
+                data = data.add(year_data)
+        data = data.reset_index()
+        return data
 
-# writes the given pandas dataframe to a csv file
-def write_to_csv(data, file_name):
-    aggregated_data.to_csv(file_name)
+    # finds the name of the file array based on the specificied area
+    def find_file_names(self):
+        if self.area == "melbourne":
+            return data_constants.melbourne_file_names
+        elif self.area == "sydney":
+            return data_constants.sydney_file_names
+        elif self.area == "australia":
+            return data_constants.australia_file_names
+
+
+    # opens the given Aurin data file and reads the contents into a dataframe
+    def open_file(self, file_name):
+        file_location = find_file(file_name)
+        data = pd.read_csv(file_location[0], sep = ',')
+        data = data.set_index('postcode')
+        return data
+
+    # finds the given file name in whatever subdirectory it is in
+    def find_file(self, file_name):
+        working_dir = os.getcwd()
+        file_location = glob.glob(working_dir + "/**/" + file_name, recursive = True)
+        return file_location
+
+    # writes the given pandas dataframe to a csv file
+    def write_to_csv(self, data):
+        aggregated_data.to_csv(self.area + "AggregatedAurinData.csv")
 
 # Main method
 if __name__ == "__main__":
-    aggregated_data = aggregate_aurin_data()
-    
-    # uncomment if you want to write the aggregated data to a file
-    # write_to_csv(aggregated_data, "MelbAurinAggregated.csv")
+    if len(sys.argv > 1):
+        area_selection = sys.argv[1]
+        data_loader = AurinDataLoad(area_selection)
+        aggregated_data = data_loader.aggregate_aurin_data()
+        data_loader.write_to_csv(aggregated_data)
+    else:
+        # return error message?
+        data_loader = AurinDataLoad(area_selection)
