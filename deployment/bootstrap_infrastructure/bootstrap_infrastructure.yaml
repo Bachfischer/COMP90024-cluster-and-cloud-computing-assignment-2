@@ -4,8 +4,22 @@
   gather_facts: true
 
   roles:
-# TODO: Remove openstack-common
-#    - role: openstack-common
     - role: openstack-volume
     - role: openstack-security-group
     - role: openstack-instance
+
+- hosts: TwitterMining
+  vars_files:
+    - host_vars/couchdb.yaml
+  gather_facts: true
+
+  roles:
+    - role: nodes-common
+    - role: nodes-docker-install
+    - role: nodes-volume-mount
+    - role: couchdb-setup
+
+- hosts: <<masternode>>
+
+  roles:
+    - role: couchdb-finish-setup

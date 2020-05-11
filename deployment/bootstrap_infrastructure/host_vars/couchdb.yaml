@@ -1,0 +1,13 @@
+---
+volumes:
+  - device: /dev/vdb
+    mountpoint: /data
+  - device: /dev/vdc
+    mountpoint: /var/lib/docker
+
+# CouchDB configuration
+user: admin
+pass: admin
+VERSION: '3.0.0'
+cookie: 'a192aeb9904e6590849337933b000c99'
+uuid: 'a192aeb9904e6590849337933b001159'

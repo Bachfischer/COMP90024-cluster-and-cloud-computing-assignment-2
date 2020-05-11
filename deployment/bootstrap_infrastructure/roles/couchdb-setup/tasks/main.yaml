@@ -1,0 +1,64 @@
+---
+# Stop existing docker containers and remove them (if any)
+
+- name: Stop CouchDB Docker container
+  docker_container:
+    name: couchdb
+    state: absent
+
+# TODO: Check ERLFLAGS
+# Create new docker container and start container
+- name: Create and start CouchDB Docker container
+  docker_container:
+    name: couchdb
+    image: "ibmcom/couchdb3:{{ VERSION }}"
+    state: started
+    recreate: always
+    volumes:
+      - /data
+    env:
+      COUCHDB_USER: "{{ user }}"
+      COUCHDB_PASSWORD: "{{ pass }}"
+      COUCHDB_SECRET: "{{ cookie }}"
+      ERL_FLAGS: "setcookie \"{{ cookie }}\" -name \"couchdb@{{ inventory_hostname }}\""\"
+
+#TODO: nCheck Syntax for invoking curl web requests in loop
+#TODO: Check how to select masternode and pass to script
+- name: Add nodes to CouchDB cluster
+  uri:
+    url: http://{{ masternode }}:5984/_cluster_setup"
+    method: POST
+    user: "{{ user }}"
+    password: "{{ pass }}"
+    force_basic_auth: yes
+    headers:
+      Content-Type: "{{ application/json }}"
+    body_format: json
+    body:       
+      action: "enable_cluster"
+      bind_address: "0.0.0.0"
+      username: "{{ user }}"
+      password: "{{ pass }}"
+      port: "5984"
+      remote_node: "{{ inventory_hostname }}"
+      node_count: "4"
+      remote_current_user: "{{ user }}"
+      remote_current_password: "{{ pass }}"
+
+#TODO: Check Syntax for invoking curl web requests in loop
+- name: Join nodes to CouchDB cluster
+  uri:
+    url: http://{{ masternode }}:5984/_cluster_setup"
+    method: POST
+    user: "{{ user }}"
+    password: "{{ pass }}"
+    force_basic_auth: yes
+    headers:
+      Content-Type: "{{ application/json }}"
+    body_format: json
+    body:       
+      action: "add_node"
+      host: "{{ inventory_hostname }}"
+      port: "5984"
+      username: "{{ user }}"
+      password: "{{ pass }}"

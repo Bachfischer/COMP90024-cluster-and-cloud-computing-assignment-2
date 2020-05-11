@@ -1,0 +1,21 @@
+---
+- name: Empy request to avoid error messages when finishing cluster setup
+  uri:
+    url: http://{{ masternode }}:5984/"
+    method: GET
+    user: "{{ user }}"
+    password: "{{ pass }}"
+    force_basic_auth: yes
+
+- name: Finish cluster setup
+  uri:
+    url: http://{{ masternode }}:5984/_cluster_setup"
+    method: POST
+    user: "{{ user }}"
+    password: "{{ pass }}"
+    force_basic_auth: yes
+    headers:
+      Content-Type: "{{ application/json }}"
+    body_format: json
+    body:       
+      action: "finish_cluster"
