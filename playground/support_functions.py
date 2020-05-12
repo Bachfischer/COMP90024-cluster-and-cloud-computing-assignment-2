@@ -26,6 +26,7 @@ def get_city_coordinates():
 	city_coordinate_dict={}
 	for line in f:
 		data=line.split(',')
+		data=[term.strip() for term in data]
 		city_coordinate_dict[data[0]]=data[1:3]
 	return city_coordinate_dict
 
@@ -33,16 +34,17 @@ def get_search_terms():
 	f=open('search_phrases.txt','r')
 	search_phrases=[]
 	for line in f:
-		search_phrases.append(line)
+		search_phrases.append(line.strip())
 	return search_phrases
 
-def create_search_term(searh_terms):
+def create_search_term(search_terms):
 	search_term=None
 	for term in search_terms:
 		if search_term==None:
 			search_term=term
 		else:
-			search_term=search_term or term
+			search_term=search_term+" OR "+term
+	return search_term
 
 def create_geocode(coordinates,distance):
 	return coordinates[0]+","+coordinates[1]+","+distance
