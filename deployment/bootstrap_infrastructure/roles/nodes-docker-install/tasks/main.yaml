@@ -14,6 +14,7 @@
     state: latest
     install_recommends: no
     update_cache: yes
+  environment: "{{ proxy_env }}"
 
 - name: Add Docker apt repository key
   tags: 'docker'
@@ -21,6 +22,7 @@
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
+  environment: "{{ proxy_env }}"
 
 - name: Add Docker apt repository and update apt cache
   tags: 'docker'
@@ -30,6 +32,7 @@
     mode: '644'
     update_cache: yes
     state: present
+  environment: "{{proxy_env}}"
 
 - name: Install docker
   tags: 'docker'
@@ -39,6 +42,7 @@
     state: latest
     install_recommends: no
     update_cache: yes
+  environment: "{{proxy_env}}"
 
 - name: Install docker-compose
   tags: 'docker'
@@ -46,3 +50,50 @@
   pip:
     name: ['docker-compose']
     state: latest
+  environment: "{{proxy_env}}"
+
+- name: Make sure that systemd directory exists
+  file:
+    path: '/etc/systemd/system'
+    state: 'directory'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+  tags: [ 'role::docker:config' ]
+
+- name: Make sure that docker.service.d directory exists
+  file:
+    path: '/etc/systemd/system/docker.service.d'
+    state: 'directory'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+  tags: [ 'role::docker:config' ]
+  become: yes
+
+- name: Configure Docker proxy
+  template:
+    src: 'http-proxy.conf.j2'
+    dest: '/etc/systemd/system/docker.service.d/http-proxy.conf'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  when: (ansible_service_mgr == 'systemd' and
+        (proxy_env.http_proxy is defined or proxy_env.https_proxy is defined))
+  tags: [ 'role::docker:config' ]
+  become: yes
+
+- name: Reload systemd daemons
+  command: systemctl daemon-reload
+  tags: [ 'role::docker:config' ]
+  become: yes
+
+- name: Restart docker daemon
+  command: systemctl restart docker
+  become: yes
+
+- name: Restart docker
+  service:
+    name: 'docker'
+    state: 'restarted'
+  become: yes

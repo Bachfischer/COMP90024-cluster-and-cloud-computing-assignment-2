@@ -11,6 +11,7 @@
     state: latest
     install_recommends: no
     update_cache: yes
+  environment: "{{ proxy_env }}"
 
 - name: Update pip
   tags: always
@@ -18,3 +19,4 @@
   pip:
     name: ['pip']
     state: latest
+  environment: "{{ proxy_env }}"
