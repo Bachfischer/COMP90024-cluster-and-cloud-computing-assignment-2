@@ -4,20 +4,21 @@
   gather_facts: true
 
   roles:
- #   - role: openstack-volume
- #   - role: openstack-security-group
- #   - role: openstack-instance
+    - role: openstack-volume
+    - role: openstack-security-group
+    - role: openstack-instance
 
+# Run on all hosts
 - hosts: TwitterMining
   vars_files:
     - host_vars/couchdb.yaml
   gather_facts: true
 
   roles:
- #   - role: nodes-common
- #   - role: nodes-docker-install
- #   - role: nodes-volume-mount
- #   - role: couchdb-setup
+    - role: nodes-common
+    - role: nodes-docker-install
+    - role: nodes-volume-mount
+    - role: couchdb-setup
 
  # Run on all hosts except Masternode
 - hosts: TwitterMining:!Masternode

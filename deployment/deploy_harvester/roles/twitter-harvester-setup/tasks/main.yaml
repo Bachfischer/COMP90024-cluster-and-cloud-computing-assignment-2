@@ -1,0 +1,43 @@
+---
+# Stop existing docker containers and remove them (if any)
+
+- name: Stop Twitter Harvester Docker container
+  become: yes
+  docker_container:
+    name: twitter-harvester
+    state: absent
+
+- name: Log into DockerHub
+  docker_login:
+    username: bachfischer
+    password: 525cd1c2-5a40-4c17-ac5a-80266610f0ff
+  become: yes
+  environment: "{{ proxy_env }}"
+
+# Build image only on one host
+- name: Build an image and push it to a private repo
+  docker_image:
+    build:
+      path: '{{ playbook_dir }}/../../twitter-harvester/'
+      pull: yes
+    name: bachfischer/cloud-assignment-2
+    tag: latest
+    push: yes
+    source: build
+  run_once: true
+  become: yes
+  environment: "{{ proxy_env }}"
+
+# TODO: Set client proxy within Docker container
+
+# Create new docker container and start container
+- name: Create and start Twitter Harvester Docker container
+  become: yes
+  docker_container:
+    name: twitter-harvester
+    image: "bachfischer/cloud-assignment-2:latest"
+    state: started
+    recreate: true
+    ports:
+      - "3333:3333"
+    pull: yes
