@@ -1,5 +1,6 @@
 import React from 'react';
 import { compose, withProps } from "recompose"
+import * as Nano from 'nano'
 import { useAsync } from 'react-async'
 import {View} from 'react-native-web'
 import { 
@@ -28,8 +29,8 @@ class MapSetup extends React.Component {
       withGoogleMap
       )((props) => 
         <GoogleMap
-          defaultZoom={4.5}
-          defaultCenter={{ lat:  -25.6,lng: 134.35}}
+          defaultZoom={9}
+          defaultCenter={{ lat:  -38.0,lng: 145.1}}
         >
           {this.renderRegions()}
         </GoogleMap>
@@ -103,15 +104,22 @@ class MapSetup extends React.Component {
 
   }
   async callAPI() {
-
-    let message = await fetch("http://localhost:4000/test")
+    let message = await fetch("https://localhost:8000/test")
     let text = await message.json()
+    console.log(text)
+    this.setState({regions: text})
+  }
+  async get_all(){
+    let message = await fetch("https://localhost:8000/get_all")
+    let text = await message.json()
+    console.log(text)
     this.setState({regions: text})
   }
 
 
   async componentDidMount() {
       this.callAPI();
+      this.get_all();
   }
 
   delayedShowMarker = () => {
