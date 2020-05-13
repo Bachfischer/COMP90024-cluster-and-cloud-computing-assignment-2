@@ -9,6 +9,7 @@ COPY package-lock.json ./
 RUN npm cache clean --force && npm install --silent
 
 COPY . /app
+EXPOSE 8000
 
 
 CMD ["npm","run","start"]

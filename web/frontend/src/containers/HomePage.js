@@ -104,13 +104,13 @@ class MapSetup extends React.Component {
 
   }
   async callAPI() {
-    let message = await fetch("https://localhost:8000/test")
+    let message = await fetch("http://localhost:8000/test")
     let text = await message.json()
     console.log(text)
     this.setState({regions: text})
   }
   async get_all(){
-    let message = await fetch("https://localhost:8000/get_all")
+    let message = await fetch("http://localhost:8000/get_all")
     let text = await message.json()
     console.log(text)
     this.setState({regions: text})
