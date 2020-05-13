@@ -1,7 +1,34 @@
 ---
+- name: Add nodes to CouchDB cluster
+  uri:
+    url: http://{{ masternode }}:5984/_cluster_setup
+    method: POST
+    user: "{{ user }}"
+    password: "{{ pass }}"
+    force_basic_auth: yes
+    status_code: 200, 201
+    headers:
+      Content-Type: "application/json"
+    body_format: json
+    body: "{\"action\": \"enable_cluster\", \"bind_address\": \"0.0.0.0\", \"username\":\"{{ user }}\", \"password\": \"{{ pass }}\", \"port\": \"5984\", \"remote_node\": \"{{ inventory_hostname }}\", \"node_count\": \"3\",\"remote_current_user\": \"{{ user }}\", \"remote_current_password\":\"{{ pass }}\"}"
+
+
+- name: Join nodes to CouchDB cluster
+  uri:
+    url: http://{{ masternode }}:5984/_cluster_setup
+    method: POST
+    user: "{{ user }}"
+    password: "{{ pass }}"
+    force_basic_auth: yes
+    headers:
+      Content-Type: "application/json"
+    body_format: json
+    body: "{\"action\":\"add_node\",\"host\":\"{{ inventory_hostname }}\",\"port\":\"5984\",\"username\":\"{{ user }}\",\"password\":\"{{ pass }}\"}"
+
+
 - name: Empy request to avoid error messages when finishing cluster setup
   uri:
-    url: http://{{ masternode }}:5984/"
+    url: http://{{ masternode }}:5984/
     method: GET
     user: "{{ user }}"
     password: "{{ pass }}"
@@ -10,14 +37,13 @@
 
 - name: Finish cluster setup
   uri:
-    url: http://{{ masternode }}:5984/_cluster_setup"
+    url: http://{{ masternode }}:5984/_cluster_setup
     method: POST
     user: "{{ user }}"
     password: "{{ pass }}"
     force_basic_auth: yes
     headers:
-      Content-Type: "{{ application/json }}"
+      Content-Type: "application/json"
     body_format: json
-    body:       
-      action: "finish_cluster"
+    body: "{\"action\":\"finish_cluster\"}"    
   run_once: true
