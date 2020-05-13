@@ -6,48 +6,35 @@ import gps_conversion
 
 
 # writes the output from the twitter api to a file
-class FileWriter():
+class TwitterHarvester():
 
     # creates an array of tweets coming in
     def __init__(self, api):
         self.api = api
+        self.db = setup_db()
 
     # writing tweets to the file from the API
-    def write_tweets(self):
-        file_name = 'twitter_data'+(datetime.datetime.now().strftime("%Y-%m-%d-%H-%M"))+'.csv'
-        
-        with open (file_name, 'a+', newline='') as csvFile:
-           csvWriter = csv.writer(csvFile)
-           print("Opened file named: " + file_name)
-           self.write_tweets_to_file(csvWriter)
-
-        print("Finished writing tweets to file")
+    def setup_db(self):
+        server = couchdb.Server("http://172.26.132.56:5984")
+        server.resource.credentials = ("admin", "data-miner!")
+        db = server['twitter']
+        return db
 
     # writes the tweets fro the API search to a CSV file
-    def write_tweets_to_file(self, csvWriter):
+    def collect_tweets_to_file(self, csvWriter):
         for tweet in tweepy.Cursor(self.api.search, q= harvester_constants.SEARCH_KEYWORDS, \
         lang = 'en', count=500, tweet_mode='extended', \
         geocode = harvester_constants.MELB_GEOCODE).items():
-             tweets_encoded = tweet.full_text.encode('utf-8')
-             tweets_decoded = tweets_encoded.decode('utf-8')
-
-             #use json.dumps() instead of the csvWriter
-
-             csvWriter.writerow([datetime.datetime.now().strftime("%Y-%m-%d  %H:%M"), \
-             tweet.id, tweets_decoded, tweet.created_at, tweet.geo, \
-             tweet.place.name if tweet.place else None, tweet.coordinates, \
-             tweet._json["user"]["location"]],)
+            self.db.save(tweet)
 
 
 if __name__ == '__main__':
-    # Authentication process
-    authenticator = tweepy.OAuthHandler(twitter_credentials.API_KEY, \
+    # Authentication process setup
+    authenticator = tweepy.AppAuthHandler(twitter_credentials.API_KEY, \
     twitter_credentials.API_SECRET_KEY)
-    authenticator.set_access_token(twitter_credentials.ACCESS_TOKEN, \
-    twitter_credentials.ACCESS_TOKEN_SECRET)
-    api = tweepy.API(authenticator)
+    api = tweepy.API(authenticator, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
     # getting tweets from the Twitter API
-    file_writer = FileWriter(api)
-    print("Writing tweets to file")
-    file_writer.write_tweets()
+    harvester = TwitterHarvester(api)
+    print("Writing tweets to db")
+    file_writer.collect_tweets()
