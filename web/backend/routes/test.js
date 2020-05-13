@@ -14,7 +14,6 @@ shapefile.open(filePathSHP,filePathDBF)
         .then(function log(result){
             if(result.done) return;
             shape.push(result.value)
-            console.log(result.value);
             return source.read().then(log);
         }))
     .catch(error => console.error(error.stack));

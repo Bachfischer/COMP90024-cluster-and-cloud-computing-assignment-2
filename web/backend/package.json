@@ -1,5 +1,5 @@
 {
-  "name": "backendtest",
+  "name": "backend",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -13,6 +13,8 @@
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
+    "nano": "^8.2.2",
+    "request": "^2.88.2",
     "shapefile": "^0.6.6"
   }
 }
