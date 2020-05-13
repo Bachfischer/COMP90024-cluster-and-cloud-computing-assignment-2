@@ -1,12 +1,4 @@
 # Run on all hosts
-- hosts: Masternode
-  vars_files:
-    - host_vars/twitter_harvester.yaml
-  gather_facts: true
-
-  roles:
-    - role: twitter-harvester-preparation
-
 - hosts: TwitterMining
   vars_files:
     - host_vars/twitter_harvester.yaml
