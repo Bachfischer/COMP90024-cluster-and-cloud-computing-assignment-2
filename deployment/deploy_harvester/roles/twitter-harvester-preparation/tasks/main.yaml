@@ -1,5 +1,4 @@
 ---
-# Stop existing docker containers and remove them (if any)
 
 - name: Log into DockerHub
   docker_login:
@@ -8,25 +7,29 @@
   become: yes
   environment: "{{ proxy_env }}"
 
-- name: Ensure GitHub deploy key is present on the server
-  copy:
-    content: "{{ ssh_deploy_key }}"
-    dest: ~/.ssh/cloud-assignment-git-repo-key
-    mode: '0600'
+# - name: Ensure GitHub deploy key is present on the server
+#   copy:
+#     content: "{{ ssh_deploy_key }}"
+#     dest: ~/.ssh/cloud-assignment-git-repo-key
+#     mode: '0600'
 
-# See: https://stackoverflow.com/a/37096534/100134
-- name: Ensure setfacl support is present.
-  package: name=acl
-  become: true
-  environment: "{{ proxy_env }}"
+# # See: https://stackoverflow.com/a/37096534/100134
+# - name: Ensure setfacl support is present.
+#   package: name=acl
+#   become: true
+#   environment: "{{ proxy_env }}"
 
-- name: Clone the code repository to the docroot.
+- name: Make sure that github code repo directory exists
+  file:
+    path: '~/cluster-and-cloud-computing-assignment-2'
+    state: 'directory'
+
+- name: Clone the code repository into home directory
   git:
-    repo: "git@github.com:Bachfischer/cluster-and-cloud-computing-assignment-2.git"
+    repo: "https://{{ githubuser | urlencode }}:{{ githubpassword | urlencode }}@github.com/Bachfischer/cluster-and-cloud-computing-assignment-2.git"
     dest: ~/cluster-and-cloud-computing-assignment-2
-    accept_hostkey: yes
-    key_file: ~/.ssh/cloud-assignment-git-repo-key
   environment: "{{ proxy_env }}"
+  become: true
 
 # Build image only on one host
 - name: Build an image and push it to a private repo
