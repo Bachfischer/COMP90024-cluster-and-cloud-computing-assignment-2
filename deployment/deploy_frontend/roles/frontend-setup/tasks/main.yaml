@@ -1,16 +1,4 @@
 ---
-# - name: Ensure GitHub deploy key is present on the server
-#   copy:
-#     content: "{{ ssh_deploy_key }}"
-#     dest: ~/.ssh/cloud-assignment-git-repo-key
-#     mode: '0600'
-
-# # See: https://stackoverflow.com/a/37096534/100134
-# - name: Ensure setfacl support is present.
-#   package: name=acl
-#   become: true
-#   environment: "{{ proxy_env }}"
-
 - name: Make sure that github code repo directory exists
   file:
     path: '~/cluster-and-cloud-computing-assignment-2'
@@ -44,19 +32,6 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
-# Stop existing docker containers and remove them (if any)
-
-- name: Stop Frontend Docker container
-  become: yes
-  docker_container:
-    name: frontend
-    state: absent
-
-- name: Stop Backend Docker container
-  become: yes
-  docker_container:
-    name: backend
-    state: absent
 
 - name: Run docker compose
   become: yes
