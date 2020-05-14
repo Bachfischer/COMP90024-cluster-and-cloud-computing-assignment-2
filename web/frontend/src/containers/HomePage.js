@@ -107,7 +107,7 @@ class MapSetup extends React.Component {
     let message = await fetch("http://localhost:8000/test")
     let text = await message.json()
     console.log(text)
-    this.setState({regions: text})
+    //this.setState({regions: text})
   }
   async get_all(){
     let message = await fetch("http://localhost:8000/get_all")
