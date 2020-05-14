@@ -3,21 +3,17 @@ availability_zone: melbourne-qh2-uom
 
 # Volume
 volumes:
-  - vol_name: cluster-server-01-volume-data
+  - vol_name: server-01-volume-data
     vol_size: 40
-  - vol_name: cluster-server-01-volume-docker
+  - vol_name: server-01-volume-docker
     vol_size: 10
-  - vol_name: cluster-server-02-volume-data
+  - vol_name: server-02-volume-data
     vol_size: 40
-  - vol_name: cluster-server-02-volume-docker
+  - vol_name: server-02-volume-docker
     vol_size: 10
-  - vol_name: cluster-server-03-volume-data
+  - vol_name: server-03-volume-data
     vol_size: 40
-  - vol_name: cluster-server-03-volume-docker
-    vol_size: 10
-  - vol_name: cluster-server-04-volume-data
-    vol_size: 40
-  - vol_name: cluster-server-04-volume-docker
+  - vol_name: server-03-volume-docker
     vol_size: 10
 
 # Security group
@@ -52,21 +48,19 @@ security_group_rules_private:
     remote_group: intra_cluster_communication
   - name: intra_cluster_communication
     protocol: tcp
-    port_range_min: 4396
-    port_range_max: 4396
+    port_range_min: 4369
+    port_range_max: 4369
     remote_group: intra_cluster_communication
 
 
 # Instance
 instances:
-  - name: cluster-server-01
-    volumes: ['cluster-server-01-volume-data', 'cluster-server-01-volume-docker']
-  - name: cluster-server-04
-    volumes: ['cluster-server-04-volume-data', 'cluster-server-04-volume-docker']
- # - name: cluster-server-02
- #   volumes: ['cluster-server-02-volume-data', 'cluster-server-02-volume-docker']
-#  - name: cluster-server-03
-#    volumes: ['cluster-server-03-volume-data', cluster-server-03-volume-docker']
+  - name: server-01
+    volumes: ['server-01-volume-data', 'server-01-volume-docker']
+  - name: server-02
+    volumes: ['server-02-volume-data', 'server-02-volume-docker']
+  - name: server-03
+    volumes: ['server-03-volume-data', 'server-03-volume-docker']
 
 
 instance_image: 215f9775-483c-4e0a-b703-d21a5c966f2e

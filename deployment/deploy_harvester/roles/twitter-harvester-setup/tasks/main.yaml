@@ -1,0 +1,78 @@
+---
+
+- name: Log into DockerHub
+  docker_login:
+    username: bachfischer
+    password: 525cd1c2-5a40-4c17-ac5a-80266610f0ff
+  become: yes
+  environment: "{{ proxy_env }}"
+
+# - name: Ensure GitHub deploy key is present on the server
+#   copy:
+#     content: "{{ ssh_deploy_key }}"
+#     dest: ~/.ssh/cloud-assignment-git-repo-key
+#     mode: '0600'
+
+# # See: https://stackoverflow.com/a/37096534/100134
+# - name: Ensure setfacl support is present.
+#   package: name=acl
+#   become: true
+#   environment: "{{ proxy_env }}"
+
+- name: Make sure that github code repo directory exists
+  file:
+    path: '~/cluster-and-cloud-computing-assignment-2'
+    state: 'directory'
+
+- name: Clone the code repository into home directory
+  git:
+    repo: "https://{{ githubuser | urlencode }}:{{ githubpassword | urlencode }}@github.com/Bachfischer/cluster-and-cloud-computing-assignment-2.git"
+    dest: ~/cluster-and-cloud-computing-assignment-2
+  environment: "{{ proxy_env }}"
+  become: true
+
+#TODO: Move to docker setup task
+- name: Make sure that Docker config directory exists
+  become: yes
+  file:
+    path: '~/.docker'
+    state: 'directory'
+
+- name: Ensure Docker client proxy settings are present on the server
+  become: yes
+  copy:
+    content: "{{ docker_proxy_settings }}"
+    dest: ~/.docker/config.json
+
+
+# Build image only on one host
+- name: Build an image and push it to local repo
+  docker_image:
+    build:
+      path: '~/cluster-and-cloud-computing-assignment-2/twitter-harvester/'
+      pull: yes
+    name: cloud-assignment-2/tweet-harvester
+    tag: latest
+    source: build
+  become: yes
+  environment: "{{ proxy_env }}"
+
+# Stop existing docker containers and remove them (if any)
+
+- name: Stop Twitter Harvester Docker container
+  become: yes
+  docker_container:
+    name: twitter-harvester
+    state: absent
+
+# Create new docker container and start container
+- name: Create and start Twitter Harvester Docker container
+  become: yes
+  docker_container:
+    name: twitter-harvester
+    image: cloud-assignment-2/tweet-harvester
+    state: started
+    pull: false
+    recreate: true
+    ports:
+      - "3333:3333"
