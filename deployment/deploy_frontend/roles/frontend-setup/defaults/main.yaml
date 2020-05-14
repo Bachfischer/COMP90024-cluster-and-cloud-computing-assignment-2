@@ -1,0 +1,48 @@
+---
+ssh_deploy_key: |
+  -----BEGIN OPENSSH PRIVATE KEY-----
+  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
+  -----END OPENSSH PRIVATE KEY-----
+
+githubuser: Bachfischer
+githubpassword: e70653f7c6e046e200acc53db73ab0e118ba4381
+docker_proxy_settings: "{\"proxies\":{\"default\":{\"httpProxy\":\"http://wwwproxy.unimelb.edu.au:8000\",\"httpsProxy\":\"http://wwwproxy.unimelb.edu.au:8000\",\"noProxy\":\"localhost,127.0.0.1,localaddress,172.16.0.0/12,.melbounre.rc.nectar.org.au,.storage.unimelb.edu.au,.cloud.unimelb.edu.au\"}}}"
+
+API_HOST: "http://localhost:3000/"
+APP_SERVER_PORT: "8000"
+REACT_APP_PORT: "4000"
