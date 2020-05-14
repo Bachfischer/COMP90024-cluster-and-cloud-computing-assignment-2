@@ -35,17 +35,12 @@
   copy:
     content: "{{ docker_proxy_settings }}"
     dest: ~/.docker/config.json
-  
-- name: Make sure that frontend  directory exists
-  file:
-    path: '~/frontend'
-    state: 'directory'
 
 - name: Configure compose
   become: yes
   template:
-    src: docker-compose.yaml.j2
-    dest: "~/frontend/docker-compose.yaml"
+    src: "{{ playbook_dir }}/../../web/docker-compose.yaml.j2"
+    dest: "~/cluster-and-cloud-computing-assignment-2/web/docker-compose.yaml"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
@@ -66,7 +61,7 @@
 - name: Run docker compose
   become: yes
   docker_compose:
-    project_src: "~/frontend/"
+    project_src: "~/cluster-and-cloud-computing-assignment-2/web/"
     pull: false
     build: yes
     state: present
