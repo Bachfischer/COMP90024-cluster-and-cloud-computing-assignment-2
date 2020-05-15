@@ -1,12 +1,5 @@
 ---
 
-- name: Log into DockerHub
-  docker_login:
-    username: bachfischer
-    password: 525cd1c2-5a40-4c17-ac5a-80266610f0ff
-  become: yes
-  environment: "{{ proxy_env }}"
-
 # - name: Ensure GitHub deploy key is present on the server
 #   copy:
 #     content: "{{ ssh_deploy_key }}"
@@ -74,5 +67,3 @@
     state: started
     pull: false
     recreate: true
-    ports:
-      - "3333:3333"

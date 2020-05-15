@@ -1,0 +1,18 @@
+{
+   "selector": {
+      "city": {
+         "$eq": "melbourne"
+      }
+   },
+   "fields": [
+      "_id",
+      "city",
+      "tweet"
+   ],
+   "sort": [
+      {
+         "_id": "desc"
+      }
+   ],
+   "limit": 1
+}
