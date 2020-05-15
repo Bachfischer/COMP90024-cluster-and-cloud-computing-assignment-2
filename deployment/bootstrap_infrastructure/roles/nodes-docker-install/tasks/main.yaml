@@ -93,7 +93,5 @@
   become: yes
 
 - name: Restart docker
-  service:
-    name: 'docker'
-    state: 'restarted'
+  command: service docker restart
   become: yes
