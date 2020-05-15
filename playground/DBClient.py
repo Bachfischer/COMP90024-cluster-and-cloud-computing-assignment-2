@@ -29,4 +29,7 @@ class DBClient:
 
 
 	def add_record(self,database_name,record):
-		doc=self.get_database(database_name).create_document(record)
+		if record['_id'] not in self.get_database(database_name):
+			doc=self.get_database(database_name).create_document(record)
+			return True
+		return False
