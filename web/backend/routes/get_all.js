@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
 
-const nano = require("nano")("http://admin:data-miner!@172.26.132.56:5984");
+const env_ip = process.env.COUCHDB_HOST
+
+ip = env_ip.replace(/"/g,"");
+
+const nano = require("nano")(ip);
 
 router.get("/",async function(req, res, next){
     
