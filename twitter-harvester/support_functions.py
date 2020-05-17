@@ -1,4 +1,5 @@
 import tweepy
+import datetime
 
 #get api keys stored in api_keys.txt
 def get_api_keys():
@@ -48,3 +49,12 @@ def create_search_term(search_terms):
 
 def create_geocode(coordinates,distance):
 	return coordinates[0]+","+coordinates[1]+","+distance
+
+def update_cursor(auth_object,search_term,geocode,last_tweet_id,max_tweet_id):
+	if last_tweet_id!=None:
+		currentCursor=tweepy.Cursor(auth_object,q=search_term,max_id=last_tweet_id-1,geocode=geocode)
+	elif max_tweet_id!=None:
+		currentCursor=tweepy.Cursor(auth_object,q=search_term,since_id=max_tweet_id+1,geocode=geocode)
+	else:
+		currentCursor=tweepy.Cursor(auth_object,q=search_term,geocode=geocode)
+	return currentCursor
