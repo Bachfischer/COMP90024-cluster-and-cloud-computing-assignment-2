@@ -28,7 +28,7 @@
     build:
       path: '~/cluster-and-cloud-computing-assignment-2/analytics/'
       pull: yes
-    name: cloud-assignment-2/analytics
+    name: cloud-assignment-2/data-analytics
     tag: latest
     source: build
   become: yes
