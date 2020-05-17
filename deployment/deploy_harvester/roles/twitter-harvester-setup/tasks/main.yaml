@@ -1,17 +1,5 @@
 ---
 
-# - name: Ensure GitHub deploy key is present on the server
-#   copy:
-#     content: "{{ ssh_deploy_key }}"
-#     dest: ~/.ssh/cloud-assignment-git-repo-key
-#     mode: '0600'
-
-# # See: https://stackoverflow.com/a/37096534/100134
-# - name: Ensure setfacl support is present.
-#   package: name=acl
-#   become: true
-#   environment: "{{ proxy_env }}"
-
 - name: Make sure that github code repo directory exists
   file:
     path: '~/cluster-and-cloud-computing-assignment-2'
@@ -24,7 +12,6 @@
   environment: "{{ proxy_env }}"
   become: true
 
-#TODO: Move to docker setup task
 - name: Make sure that Docker config directory exists
   become: yes
   file:
@@ -37,8 +24,6 @@
     content: "{{ docker_proxy_settings }}"
     dest: ~/.docker/config.json
 
-
-# Build image only on one host
 - name: Build an image and push it to local repo
   docker_image:
     build:
@@ -51,7 +36,6 @@
   environment: "{{ proxy_env }}"
 
 # Stop existing docker containers and remove them (if any)
-
 - name: Stop Twitter Harvester Docker container
   become: yes
   docker_container:
