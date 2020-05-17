@@ -31,6 +31,7 @@
     name: cloud-assignment-2/data-analytics
     tag: latest
     source: build
+    force: yes
   become: yes
   environment: "{{ proxy_env }}"
 

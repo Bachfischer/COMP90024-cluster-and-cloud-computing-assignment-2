@@ -32,6 +32,7 @@
     name: cloud-assignment-2/tweet-harvester
     tag: latest
     source: build
+    force: yes
   become: yes
   environment: "{{ proxy_env }}"
 
