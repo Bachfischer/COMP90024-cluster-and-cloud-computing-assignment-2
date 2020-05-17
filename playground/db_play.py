@@ -1,6 +1,7 @@
 from DBClient import DBClient
 from Tweet_Object import Tweet_Object
 from support_functions import *
+from db_constants import *
 import datetime
 import time
 import json
@@ -25,13 +26,13 @@ def get_valid_credentials(list_of_credentials):
 	return None, min_diff
 
 def get_twitter_auth_client():
-	database_client= DBClient('admin', 'data-miner!', url='http://172.26.132.56:5984/')
+	database_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
 	while True:
-		twitter_credentials=database_client.get_query_result('twitter_credentials',{'in_use': {'$eq': False }})
+		twitter_credentials=database_client.get_query_result(CREDENTIALS_DATABASE,{'in_use': {'$eq': False }})
 		if len(twitter_credentials)>0:
 			valid_credentials,min_diff=get_valid_credentials(twitter_credentials)
 			if valid_credentials!=None:
-				database_client.modify_record('twitter_credentials',valid_credentials['_id'],['in_use'],[True])
+				database_client.modify_record(CREDENTIALS_DATABASE,valid_credentials['_id'],['in_use'],[True])
 				auth=get_auth_object([valid_credentials[key] for key in ['consumer_key','consumer_secret','access_token_key','access_token_secret']])
 				database_client.close_connection()
 				return auth,valid_credentials['_id']
@@ -46,17 +47,17 @@ def get_twitter_auth_client():
 
 
 def get_city_to_search():
-	database_client= DBClient('admin', 'data-miner!', url='http://172.26.132.56:5984/')
-	cities=database_client.get_query_result('cities',{'in_use': {'$eq': False }})
+	database_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
+	cities=database_client.get_query_result(CITIES_DATABASE,{'in_use': {'$eq': False }})
 	if len(cities)>0:
 		cities=sorted(cities,key=lambda i:get_time_diff(datetime.datetime.strptime(i['last_used'], datetimeFormat),datetime.datetime.now()),reverse=True)
-		database_client.modify_record('cities',cities[0]['_id'],['in_use'],[True])
+		database_client.modify_record(CITIES_DATABASE,cities[0]['_id'],['in_use'],[True])
 		database_client.close_connection()
 		return cities[0]
 
 def get_last_tweet_id(database_client,city):
 	# database_client= DBClient('admin', 'data-miner!', url='http://172.26.132.56:5984/')
-	result=database_client.get_database('new_twitter_examples').get_query_result({'city': {'$eq': city }})
+	result=database_client.get_database(REPOSITORY_DATABASE).get_query_result({'city': {'$eq': city }})
 	# result=database_client.get_query_result('twitter_example',,)
 	# database_client.close_connection()
 	if len(list(result))>0:
@@ -66,8 +67,8 @@ def get_last_tweet_id(database_client,city):
 
 
 def get_search_term():
-	database_client= DBClient('admin', 'data-miner!', url='http://172.26.132.56:5984/')
-	result=database_client.get_database("search_terms")['climate_change']
+	database_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
+	result=database_client.get_database(SEARCH_TERM_DATABASE)[SEARCH_TERM]
 	
 	phrase=create_search_term(result['phrases'])
 	database_client.close_connection()
@@ -91,7 +92,7 @@ print("got auth")
 city=get_city_to_search()
 print("got city")
 print(city["_id"])
-db_client = DBClient('admin', 'data-miner!', url='http://172.26.132.56:5984/')
+db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
 currentCursor=choose_cursor(db_client,auth,city,search_term)
 min_id=get_last_tweet_id(db_client,city['_id'])
 db_client.close_connection()
@@ -102,25 +103,25 @@ while True:
 		print("here to add")
 		for tweet in tweets:
 			myObject=Tweet_Object(str(tweet.id),city['_id'],city['lat'],city['long'],json.dumps(tweet._json),tweet.created_at)
-			db_client = DBClient('admin', 'data-miner!', url='http://172.26.132.56:5984/')
-			if db_client.add_record('new_twitter_examples',jsons.dump(myObject)):
+			db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
+			if db_client.add_record(REPOSITORY_DATABASE,jsons.dump(myObject)):
 				print("tweet added")
 				if int(city['max_id'])<tweet.id:
 					city['max_id']=str(tweet.id)
 			db_client.close_connection()
 		time.sleep(random.randint(0,4))
-		db_client = DBClient('admin', 'data-miner!', url='http://172.26.132.56:5984/')
+		db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
 		
 		if min_id==get_last_tweet_id(db_client,city['_id']) and len(city['available_options'])==3:
 			city['available_options'].remove('back')
 
-		db_client.modify_record('cities',city['_id'],['in_use','last_used','max_id','available_options'],[False,datetime.datetime.now().strftime(datetimeFormat),city['max_id'],city['available_options']])
+		db_client.modify_record(CITIES_DATABASE,city['_id'],['in_use','last_used','max_id','available_options'],[False,datetime.datetime.now().strftime(datetimeFormat),city['max_id'],city['available_options']])
 		db_client.close_connection()
 		city=get_city_to_search()
 		print("got city")
 		print(city["_id"])
 		search_term=get_search_term()
-		db_client = DBClient('admin', 'data-miner!', url='http://172.26.132.56:5984/')
+		db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
 		currentCursor=choose_cursor(db_client,auth,city,search_term)
 		min_id=get_last_tweet_id(db_client,city['_id'])
 		db_client.close_connection()
@@ -129,19 +130,19 @@ while True:
 	except tweepy.TweepError as e:
 		print(e)
 		time.sleep(random.randint(0,4))
-		db_client = DBClient('admin', 'data-miner!', url='http://172.26.132.56:5984/')
+		db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
 		if min_id==get_last_tweet_id(db_client,city['_id']) and len(city['available_options'])==3:
 			city['available_options'].remove('back')
-		db_client.modify_record('twitter_credentials',credential_id,['in_use','last_used'],[False,datetime.datetime.now().strftime(datetimeFormat)])
-		db_client.modify_record('cities',city['_id'],['in_use','last_used','max_id','available_options'],[False,datetime.datetime.now().strftime(datetimeFormat),city['max_id'],city['available_options']])
+		db_client.modify_record(CREDENTIALS_DATABASE,credential_id,['in_use','last_used'],[False,datetime.datetime.now().strftime(datetimeFormat)])
+		db_client.modify_record(CITIES_DATABASE,city['_id'],['in_use','last_used','max_id','available_options'],[False,datetime.datetime.now().strftime(datetimeFormat),city['max_id'],city['available_options']])
 		db_client.close_connection()
 		auth,credential_id=get_twitter_auth_client()
 		print("got auth")
 		city=get_city_to_search()
 		print("got city")
 		print(city["_id"])
-		search_term=get_search_term()
-		db_client = DBClient('admin', 'data-miner!', url='http://172.26.132.56:5984/')
+		
+		db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
 		currentCursor=choose_cursor(db_client,auth,city,search_term)
 		min_id=get_last_tweet_id(db_client,city['_id'])
 		db_client.close_connection()
