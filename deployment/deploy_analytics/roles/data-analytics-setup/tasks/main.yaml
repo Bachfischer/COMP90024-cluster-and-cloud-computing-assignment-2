@@ -1,0 +1,52 @@
+---
+- name: Make sure that github code repo directory exists
+  file:
+    path: '~/cluster-and-cloud-computing-assignment-2'
+    state: 'directory'
+
+- name: Clone the code repository into home directory
+  git:
+    repo: "https://{{ githubuser | urlencode }}:{{ githubpassword | urlencode }}@github.com/Bachfischer/cluster-and-cloud-computing-assignment-2.git"
+    dest: ~/cluster-and-cloud-computing-assignment-2
+  environment: "{{ proxy_env }}"
+  become: true
+
+- name: Make sure that Docker config directory exists
+  become: yes
+  file:
+    path: '~/.docker'
+    state: 'directory'
+
+- name: Ensure Docker client proxy settings are present on the server
+  become: yes
+  copy:
+    content: "{{ docker_proxy_settings }}"
+    dest: ~/.docker/config.json
+
+- name: Build an image and push it to local repo
+  docker_image:
+    build:
+      path: '~/cluster-and-cloud-computing-assignment-2/analytics/'
+      pull: yes
+    name: cloud-assignment-2/analytics
+    tag: latest
+    source: build
+  become: yes
+  environment: "{{ proxy_env }}"
+
+
+- name: Stop Data Analytics Docker container
+  become: yes
+  docker_container:
+    name: data-analytics
+    state: absent
+
+# Create new docker container and start container
+- name: Create and start Data Analytics Docker container
+  become: yes
+  docker_container:
+    name: data-analytics
+    image: cloud-assignment-2/data-analytics
+    state: started
+    pull: false
+    recreate: true
