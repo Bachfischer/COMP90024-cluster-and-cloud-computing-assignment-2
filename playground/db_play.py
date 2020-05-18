@@ -78,9 +78,11 @@ def choose_cursor(database_client,auth,city,search_term):
 	if "back" in city["available_options"]:
 		return update_cursor(auth.search,search_term,create_geocode([city['lat'],city['long']],"100km"),get_last_tweet_id(db_client,city['_id']),None)
 	else:
-		return update_cursor(auth.search,search_term,create_geocode([city['lat'],city['long']],"100km"),None,int(city["max_id"]))
-
-
+		i=random.randint(0,2)
+		if city["available_options"][i]=='forward':
+			return update_cursor(auth.search,search_term,create_geocode([city['lat'],city['long']],"100km"),None,int(city["max_id"]))
+		else:
+			return update_cursor(auth.search,search_term,create_geocode([city['lat'],city['long']],"100km"),None,None)
 
 
 # db_client = DBClient('admin', 'data-miner!', url='http://172.26.132.56:5984/')
@@ -102,7 +104,12 @@ while True:
 	try:
 		print("here to add")
 		for tweet in tweets:
-			myObject=Tweet_Object(str(tweet.id),city['_id'],city['lat'],city['long'],json.dumps(tweet._json),tweet.created_at)
+			t=json.loads(json.dumps(tweet._json))
+			myObject=None
+			if t['coordinates']!=None:
+				myObject=Tweet_Object(str(tweet.id),city['_id'],str(t['coordinates']['coordinates'][1]),str(t['coordinates']['coordinates'][0]),json.dumps(tweet._json),tweet.created_at,True)
+			else:
+				myObject=Tweet_Object(str(tweet.id),city['_id'],city['lat'],city['long'],json.dumps(tweet._json),tweet.created_at,False)
 			db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
 			if db_client.add_record(REPOSITORY_DATABASE,jsons.dump(myObject)):
 				print("tweet added")
