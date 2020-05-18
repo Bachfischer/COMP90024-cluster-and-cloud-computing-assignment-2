@@ -9,8 +9,8 @@ for doc in twitter_database:
 	tweet=json.loads(doc['tweet'])
 	if tweet['coordinates']!=None:
 		coordinates=tweet['coordinates']['coordinates']
-		doc['lat']=str(coordinates[1])
-		doc['long']=str(coordinates[0])
+		doc['latitude']=str(coordinates[1])
+		doc['longitude']=str(coordinates[0])
 		doc['geo_enabled']=True
 	else:
 		doc['geo_enabled']=False
