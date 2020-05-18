@@ -4,6 +4,8 @@ import time
 from support_functions import *
 from itertools import cycle
 
+def update_authid(authID,num_of_auths):
+	return int((authID+1)%num_of_auths)
 
 auths=[get_auth_object(key_list) for key_list in get_api_keys()]
 
@@ -29,61 +31,56 @@ city=next(cities)
 print(city)
 
 # print(create_geocode(city_coordinates['melbourne'],"100km"))
-currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,geocode=create_geocode(city_coordinates[city],"100km"))
+currentCursor=update_cursor(auths[authID].search,search_term,create_geocode(city_coordinates[city],"100km"),last_tweet_from_city[city])
+# currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,geocode=create_geocode(city_coordinates[city],"100km"))
 tweets=currentCursor.items()
 
 count=0
 
 # print(num_of_auths)
-
+last_count=None
 last_tweet_id=None
 while True:
 	try:
 		tweet=tweets.next()
+		print(tweet.created_at)
+		if tweet!=None:
+			count+=1
+			city_tweet_count[city]+=1
 		
 		last_tweet_from_city[city]=tweet.id
-		
-		city_tweet_count[city]+=1
 		
 		if city_tweet_count[city]%100==0:
 			print(city_tweet_count[city])
 
-		if city_tweet_count[city]%2500==0:
+		if city_tweet_count[city]%500==0:
 			city=next(cities)
 			print(city)
-			if last_tweet_from_city[city]!=None:
-				currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,max_id=last_tweet_from_city[city]-1,geocode=create_geocode(city_coordinates[city],"100km"))
-			else:
-				currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,geocode=create_geocode(city_coordinates[city],"100km"))
+			authID=update_authid(authID,num_of_auths)
+			currentCursor=update_cursor(auths[authID].search,search_term,create_geocode(city_coordinates[city],"100km"),last_tweet_from_city[city])
 			tweets=currentCursor.items()
+			time.sleep(2)
+		elif count==last_count:
+			authID=update_authid(authID,num_of_auths)
+			city=next(cities)
+			print(city)
+			currentCursor=update_cursor(auths[authID].search,search_term,create_geocode(city_coordinates[city],"100km"),last_tweet_from_city[city])
+			tweets=currentCursor.items()
+
 
 
 	except tweepy.TweepError as e:
-		if e.args[0].split(" = " )[1]=="429" or e.args[0].split(" = " )[1]=="420":
-			
-			# print("changing Auth tokens")
-			
-			if int((authID)%num_of_auths)==0:
-				time.sleep(60*5)
-			
-			authID=int((authID)%num_of_auths)+1
-			
-			if last_tweet_from_city[city]!=None:
-				currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,max_id=last_tweet_from_city[city]-1,geocode=create_geocode(city_coordinates[city],"100km"))
-			else:
-				currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,geocode=create_geocode(city_coordinates[city],"100km"))
-			tweets=currentCursor.items()
-		
-		if e.args[0].split(" = " )[1]=="304":
-			city=next(cities)
-			print(city)
-			if last_tweet_from_city[city]!=None:
-				currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,max_id=last_tweet_from_city[city]-1,geocode=create_geocode(city_coordinates[city],"100km"))
-			else:
-				currentCursor=tweepy.Cursor(auths[authID].search,q=search_term,geocode=create_geocode(city_coordinates[city],"100km"))
-			tweets=currentCursor.items()
-
+		print("changing Auth tokens")
+		print(e)
+		if authID==num_of_auths-1:
+			print("sleeping")
+			time.sleep(60*10)
+			authID=0
+		else:
+			authID=update_authid(authID,num_of_auths)
+		city=next(cities)
+		print(city)
+		currentCursor=update_cursor(auths[authID].search,search_term,create_geocode(city_coordinates[city],"100km"),last_tweet_from_city[city])
+		tweets=currentCursor.items()
 	except StopIteration:
 		continue
-
-print(count)
