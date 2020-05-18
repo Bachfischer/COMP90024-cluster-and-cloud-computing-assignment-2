@@ -7,7 +7,7 @@ for doc in twitter_database:
 	doc['in_use']=False
 	doc.save()
 cities_database=database_client.get_database('cities')
-for doc in twitter_database:
+for doc in cities_database:
 	doc['in_use']=False
 	doc.save()
 database_client.close_connection()
