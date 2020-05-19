@@ -43,6 +43,18 @@
     name: twitter-harvester
     state: absent
 
+# Install cloudant python package.
+- pip:
+    name: cloudant
+  environment: "{{ proxy_env }}"
+
+# Run script to reset twitter harvesters in database
+- name: Reset twitter harvesters
+  script: '~/cluster-and-cloud-computing-assignment-2/twitter-harvester/reset_twitter_harvesters.py'
+  args:
+    executable: python3
+  run_once: true
+
 # Create new docker container and start container
 - name: Create and start Twitter Harvester Docker container
   become: yes
