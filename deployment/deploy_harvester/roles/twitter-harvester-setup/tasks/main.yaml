@@ -1,9 +1,5 @@
 ---
 
-- name: Make sure that github code repo directory exists
-  file:
-    path: '~/cluster-and-cloud-computing-assignment-2'
-    state: 'directory'
 
 - name: Clone the code repository into home directory
   git:
@@ -46,13 +42,13 @@
 # Install cloudant python package.
 - pip:
     name: cloudant
+  become: true
   environment: "{{ proxy_env }}"
 
 # Run script to reset twitter harvesters in database
 - name: Reset twitter harvesters
-  script: '~/cluster-and-cloud-computing-assignment-2/twitter-harvester/reset_twitter_harvesters.py'
-  args:
-    executable: python3
+  command: 'python3 ~/cluster-and-cloud-computing-assignment-2/twitter-harvester/reset_twitter_harvesters.py'
+  become: true
   run_once: true
 
 # Create new docker container and start container
