@@ -11,7 +11,7 @@ router.get("/",async function(req, res, next){
     
     var shape = [] 
     let id = req.query.id;
-    var db = nano.use('geo_json')
+    var db = nano.use('aurin_postcode')
     
     await db.view('get_all',"id").then((body) => {
         body.rows.forEach((doc) => {
