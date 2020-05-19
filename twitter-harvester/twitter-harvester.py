@@ -1,5 +1,5 @@
-from DBClient import DBClient
-from Tweet_Object import Tweet_Object
+from db_client import DBClient
+from tweet_object import Tweet_Object
 from support_functions import *
 from db_constants import *
 import datetime
