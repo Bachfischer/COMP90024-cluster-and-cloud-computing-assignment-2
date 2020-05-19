@@ -18,3 +18,5 @@ australia_file_names = ["AusAurin18.csv", "AusAurin17.csv", "AusAurin16.csv", \
 "AusAurin09.csv", "AusAurin08.csv", "AusAurin07.csv", \
 "AusAurin06.csv", "AusAurin05.csv", "AusAurin04.csv", \
 "AusAurin03.csv", "AusAurin02.csv", "AusAurin01.csv"]
+
+city_names = ["melbourne", "sydney"]

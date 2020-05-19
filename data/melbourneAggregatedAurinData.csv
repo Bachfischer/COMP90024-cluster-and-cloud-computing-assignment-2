@@ -1,4 +1,4 @@
-,postcode, total_installations_quantity
+id, postcode, total_installations_quantity
 0,3000,25.0
 1,3002,20.0
 2,3003,52.0
