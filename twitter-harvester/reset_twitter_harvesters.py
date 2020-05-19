@@ -1,5 +1,5 @@
-from DBClient import DBClient
-from db_constants import *
+from twitter_harvester.db_client import DBClient
+from twitter_harvester.db_constants import *
 
 database_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
 twitter_database=database_client.get_database('twitter_credentials')
