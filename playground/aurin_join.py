@@ -15,6 +15,7 @@ resultdb = couchdb.Database("http://172.26.132.56:5984/result_db")
 resultdb.resource.credentials = (username, password)
 join_db = couchdb.Database("http://172.26.132.56:5984/aurin_postcode")
 join_db.resource.credentials = (username, password)
+logger.info("Connected")
 
 
 postcodes=dict()
@@ -35,10 +36,24 @@ for item in geojsondb.view('get_all/id'):
 for suburb in aurin:
     postcode = suburb.value['_id']
     if postcode in postcodes:
-        suburb.value['tweet_count'] = postcodes.get(postcode)
+        suburb_prop = suburb.value['properties']
+        #installations / tweet count
+        ratio = postcodes.get(postcode)/suburb_prop['0total_ins']
+        suburb_prop['ratio'] = ratio
+        suburb_prop['tweet_count'] = postcodes.get(postcode)
+        suburb.value['properties'] = suburb_prop
         joint.append(suburb.value)
         postcodes.pop(postcode)
-        print(suburb)
+    else:
+        suburb_prop = suburb.value['properties']
+        #installations / tweet count
+        suburb_prop['ratio'] = -1
+        suburb.value['properties'] = suburb_prop
+        joint.append(suburb.value)
+        postcodes.pop(postcode)
 
-print(postcodes)
-print(aurin)
+
+
+print(joint)
+
+
