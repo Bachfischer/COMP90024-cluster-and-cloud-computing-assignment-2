@@ -19,7 +19,7 @@ volumes:
 # Security group
 security_groups:
   - name: administration
-    description: "Security group for server administration (e.g. for SSH access)"
+    description: "Security group for server administration and remote access (e.g. access via SSH or HTTP for Frontend)"
   - name: intra_cluster_communication
     description: "Security group for communication between CouchDB nodes in cluster"
 

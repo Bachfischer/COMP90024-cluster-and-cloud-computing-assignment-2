@@ -1,7 +1,7 @@
 [TwitterMining]
-172.26.130.163
-172.26.132.229
-172.26.133.232
+172.26.131.235
+172.26.132.235
+172.26.133.36
 
 [TwitterMining:vars]
 ansible_python_interpreter=/usr/bin/python3

@@ -16,7 +16,7 @@ proxy_env:
 
 # CouchDB configuration
 user: admin
-pass: data-miner!
+pass: "data-miner!"
 VERSION: '3.0.0'
 cookie: 'gQ7wygusPdkybBsmMr4uwGXq'
 uuid: '5CBC6EFF-45E9-4981-B300-D40782BA0B26'
