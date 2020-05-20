@@ -1,7 +1,7 @@
-from DBClient import DBClient
-from Tweet_Object import Tweet_Object
-from support_functions import *
-from db_constants import *
+from twitter_harvester.db_client import DBClient
+from twitter_harvester.tweet_object import Tweet_Object
+from twitter_harvester.support_functions import *
+from twitter_harvester.db_constants import *
 import datetime
 import time
 import json

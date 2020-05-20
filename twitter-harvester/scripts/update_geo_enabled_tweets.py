@@ -1,4 +1,4 @@
-from DBClient import DBClient
+from db_client import DBClient
 from db_constants import *
 import json
 

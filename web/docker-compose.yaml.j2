@@ -6,7 +6,6 @@ services:
         build: ./backend
         image: cloud-assignment-2/backend
         environment:
-            API_HOST: "{{ API_HOST }}"
             APP_SERVER_PORT: {{ APP_SERVER_PORT }}
             COUCHDB_HOST: {{ COUCHDB_HOST }}
         ports:
@@ -19,7 +18,7 @@ services:
         environment:
             REACT_APP_PORT: {{ REACT_APP_PORT }}
         ports:
-            - {{ REACT_APP_PORT }}:{{ REACT_APP_PORT }}
+            - 80:{{ REACT_APP_PORT }}
         stdin_open: true
         links:
             - backend
