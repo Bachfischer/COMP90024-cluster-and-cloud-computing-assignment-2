@@ -1,5 +1,6 @@
 import tweepy
 import datetime
+import string
 
 #get api keys stored in api_keys.txt
 def get_api_keys():
@@ -58,3 +59,10 @@ def update_cursor(auth_object,search_term,geocode,last_tweet_id,max_tweet_id):
 	else:
 		currentCursor=tweepy.Cursor(auth_object,q=search_term,geocode=geocode)
 	return currentCursor
+
+def decide_whether_text_match(text,search_terms):
+	for term in search_terms:
+		if term in ''.join(e for e in text.lower() if e.isalnum()):
+			return True
+	return False
+
