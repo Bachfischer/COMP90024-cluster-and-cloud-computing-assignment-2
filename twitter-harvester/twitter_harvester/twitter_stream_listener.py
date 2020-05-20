@@ -7,7 +7,7 @@ class TwitterStreamListener(tweepy.StreamListener):
 		self.city=city
 	
 	def on_status(self, status):
-        db_client = DBClient('admin', 'data-miner!', url='http://172.26.132.56:5984/')
+        db_client = DBClient('admin', 'data-miner!', url='http://172.26.133.36:5984/')
 
     def on_error(self, status_code):
         if status_code == 420:
