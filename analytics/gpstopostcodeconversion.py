@@ -1,46 +1,43 @@
 import couchdb
-
 from geopy import Point
 from geopy.geocoders import Nominatim
+import time
 
 geolocator = Nominatim(timeout=10)
-
 username = "admin"
 password = "data-miner!"
-cdb = couchdb.Database("http://172.26.132.56:5984/new_twitter_examples")
+cdb = couchdb.Database("http://172.26.133.36:5984/twitter_raw_data")
 cdb.resource.credentials = (username, password)
-resultdb = couchdb.Database("http://172.26.132.56:5984/result_db")
+resultdb = couchdb.Database("http://172.26.133.36:5984/twitter_result_db")
 resultdb.resource.credentials = (username, password)
-count = 0
 doc_id = []
-document_id = []
-mango = {'selector': {'Flag': 'N'}, 'limit': 10000000000}
-
-for dbname in cdb.find(mango):
-    docu_id = dbname['_id']
-    print(docu_id)
-    doc_id.append(docu_id)
+mango = {'selector': {'Flag': 'N'}}
 
 
-def getZipCode(longfield, latfield):
+def getZipCode(longfield, latfield, geolocation_enabled):
     location = geolocator.reverse(Point(latfield, longfield))
     try:
-        postcode = location.raw['address']['postcode']
-        return postcode
+        if geolocation_enabled is "true":
+            postcode = location.raw['address']['postcode']
+            return postcode
+        else:
+            postcode = location.raw['address']['postcode']
+            postcode = "1" + postcode
+            return postcode
     except KeyError:
         pass
         postcode = "Nil"
         return postcode
 
-for document_id in doc_id:
-    print(document_id)
+
+def dataProcessing(couchdbdoc_id):
     try:
-        if not "design" in document_id:
-            count = count + 1
-            latitude = str(cdb[document_id]['latitude'])
-            longitude = str(cdb[document_id]['longitude'])
-            zipcode = getZipCode(longitude, latitude)
-            doc = cdb[document_id]
+        if not "design" in couchdbdoc_id:
+            geo_enabled = str(cdb[couchdbdoc_id]['geo_enabled'])
+            latitude = str(cdb[couchdbdoc_id]['latitude'])
+            longitude = str(cdb[couchdbdoc_id]['longitude'])
+            zipcode = getZipCode(longitude, latitude, geo_enabled)
+            doc = cdb[couchdbdoc_id]
             if not "Nil" in zipcode:
                 doc['Postcode'] = str(zipcode)
                 del doc['_id']
@@ -49,8 +46,24 @@ for document_id in doc_id:
                 print("Result DB updated")
             else:
                 print("ZipCode not found ... Moving to next document.")
-        updatingFlag = cdb[document_id]
-        updatingFlag['Flag'] = "Y"  # Updating Flag in Raw DB
-        cdb.save(updatingFlag)  # Saving document in Raw DB
+        updatingflag = cdb[couchdbdoc_id]
+        updatingflag['Flag'] = "Y"  # Updating Flag in Raw DB
+        cdb.save(updatingflag)
     except TypeError:
         pass
+
+
+while 1:
+    dataset = cdb.find(mango)
+    for dbname in dataset:
+        docu_id = dbname['_id']
+        doc_id.append(docu_id)
+    if len(doc_id) == 0:
+        print("Waiting for 1 minute")
+        time.sleep(60)
+        print("Checking Raw DB for new tweets....")
+    else:
+        for document in doc_id:
+            dataProcessing(document)   
+    doc_id = []
+
