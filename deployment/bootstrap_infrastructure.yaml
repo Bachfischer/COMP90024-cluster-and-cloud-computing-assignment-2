@@ -1,0 +1,51 @@
+- hosts: localhost
+  vars_files:
+    - host_vars/research_cloud_resources.yaml
+  gather_facts: true
+
+  roles:
+#    - role: openstack-volume
+#    - role: openstack-security-group
+#    - role: openstack-instance
+
+# Install Docker and CouchDB
+- hosts: DataNodes
+  vars_files:
+    - host_vars/couchdb_settings.yaml
+  gather_facts: true
+
+  roles:
+#    - role: nodes-common
+#    - role: nodes-docker-install
+#    - role: nodes-volume-mount
+#    - role: couchdb-setup
+
+ # Perform CouchDB configuration on all hosts except Masternode
+- hosts: DataNodes:!Masternode
+  vars_files:
+    - host_vars/couchdb_settings.yaml
+  gather_facts: true
+
+  roles:
+#    - role: couchdb-finish-setup
+
+
+# Install Twitter Harvester on all hosts
+- hosts: DataNodes
+  vars_files:
+    - host_vars/environment_variables.yaml
+  gather_facts: true
+
+  roles:
+#    - role: twitter-harvester-setup
+
+
+# Install data analytics scripts and React frontend
+- hosts: ProcessingNodes
+  vars_files:
+    - host_vars/environment_variables.yaml
+  gather_facts: true
+
+  roles:
+    - role: data-analytics-setup
+    - role: frontend-setup

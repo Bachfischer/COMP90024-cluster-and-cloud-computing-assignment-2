@@ -1,9 +1,4 @@
 ---
-- name: Make sure that github code repo directory exists
-  file:
-    path: '~/cluster-and-cloud-computing-assignment-2'
-    state: 'directory'
-
 - name: Clone the code repository into home directory
   git:
     repo: "https://{{ githubuser | urlencode }}:{{ githubpassword | urlencode }}@github.com/Bachfischer/cluster-and-cloud-computing-assignment-2.git"

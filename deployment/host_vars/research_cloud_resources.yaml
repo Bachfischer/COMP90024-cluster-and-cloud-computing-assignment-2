@@ -15,6 +15,10 @@ volumes:
     vol_size: 40
   - vol_name: server-03-volume-docker
     vol_size: 10
+  - vol_name: server-04-volume-data
+    vol_size: 40
+  - vol_name: server-04-volume-docker
+    vol_size: 10
 
 # Security group
 security_groups:
@@ -71,6 +75,8 @@ instances:
     volumes: ['server-02-volume-data', 'server-02-volume-docker']
   - name: server-03
     volumes: ['server-03-volume-data', 'server-03-volume-docker']
+  - name: server-04
+    volumes: ['server-04-volume-data', 'server-04-volume-docker']
 
 
 instance_image: 215f9775-483c-4e0a-b703-d21a5c966f2e
