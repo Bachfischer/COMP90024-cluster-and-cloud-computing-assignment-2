@@ -1,8 +1,6 @@
 import React from 'react';
 import { compose, withProps } from "recompose"
-import * as Nano from 'nano'
 import { useAsync } from 'react-async'
-import {View} from 'react-native-web'
 import { 
   Polygon,
   GoogleMap,
@@ -10,13 +8,16 @@ import {
   withGoogleMap
   } from "react-google-maps"
 
+import ColourBar from '../components/Colourbar'
 let counter = 0
 class MapSetup extends React.Component {
   constructor(props) {
     super(props)      
     this.state = { 
       counter: 0,
-      regions: null};
+      regions: null,
+      min_ratio: 0,
+      max_ratio: 0};
   }
   Map = compose(
       withProps({
@@ -59,6 +60,7 @@ class MapSetup extends React.Component {
         }
         coordArrOuter.push(coordArrInner)
       })
+      let colour = regionJ.properties.ratio.toString(16).join('0000')
       if(coordArrOuter[0] instanceof(Array)){
         return (
           coordArrOuter.map(coord => (
@@ -66,7 +68,7 @@ class MapSetup extends React.Component {
             key = {counter++}
             paths ={coord}
             options={{
-              strokeColor: '#fc1e0d',
+              strokeColor: colour,
               strokeOpacity: 1,
               strokeWeight: 2,
               icons: [{
@@ -87,7 +89,7 @@ class MapSetup extends React.Component {
             key = {counter++}
             paths ={coord}
             options={{
-              strokeColor: '#fc1e0d',
+              strokeColor: colour,
               strokeOpacity: 1,
               strokeWeight: 2,
               icons: [{
@@ -103,22 +105,52 @@ class MapSetup extends React.Component {
     )
 
   }
+  /*
   async callAPI() {
     let message = await fetch("http://172.26.130.163:8000/test")
     let text = await message.json()
     console.log(text)
     //this.setState({regions: text})
   }
+  */
   async get_all(){
     let message = await fetch("http://172.26.130.163:8000/get_all")
     let text = await message.json()
     console.log(text)
-    this.setState({regions: text})
+    this.find_ratio(text)
+  }
+
+  find_ratio(suburbs){
+    let min_ratio = 1000000
+    let max_ratio = 0
+    let pc_ratio = []
+    for(let i = 0; i=suburbs.length();i++){
+      let temp_ratio = suburbs[i].properties.ratio
+      if(temp_ratio > max_ratio){
+        max_ratio = temp_ratio 
+      }
+      if(temp_ratio < min_ratio){
+        min_ratio = temp_ratio 
+      }
+      pc_ratio.push([suburbs._id,temp_ratio])
+    }
+    for(let i = 0; i=pc_ratio.length();i++){
+      pc_ratio[i][1] = 255 *((pc_ratio[i][1] - min_ratio)/(max_ratio-min_ratio))
+    }
+    for(let i = 0; i=suburbs.length();i++){
+      for(let j = 0; i=suburbs.length();i++){
+        if(suburbs[i]._id === pc_ratio[j][0]){
+          suburbs[i].properties.ratio = pc_ratio[j][1]
+          break 
+        }
+      }
+    }
+    this.setState({regions: suburbs})
   }
 
 
   async componentDidMount() {
-      this.callAPI();
+      //this.callAPI();
       this.get_all();
   }
 
@@ -134,7 +166,10 @@ class MapSetup extends React.Component {
   }
   render(){
     return(
-    <div>{this.state.regions && <this.Map/>}</div>
+      <div>
+        <div>{this.state.regions && <this.Map/>}</div>
+        <ColourBar/>
+      </div>
     )
   }
 
