@@ -17,7 +17,7 @@ mango = {'selector': {'Flag': 'N'}}
 def getZipCode(longfield, latfield, geolocation_enabled):
     location = geolocator.reverse(Point(latfield, longfield))
     try:
-        if geolocation_enabled is "true":
+        if geolocation_enabled.lower() == 'true':
             postcode = location.raw['address']['postcode']
             return postcode
         else:
