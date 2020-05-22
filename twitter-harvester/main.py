@@ -70,7 +70,7 @@ def get_search_term():
 	database_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
 	result=database_client.get_database(SEARCH_TERM_DATABASE)[SEARCH_TERM]
 	phrases=random.sample(result['phrases'],20)
-	phrase=create_search_term(result['phrases'])
+	phrase=create_search_term(phrases)
 	database_client.close_connection()
 	return phrase
 
