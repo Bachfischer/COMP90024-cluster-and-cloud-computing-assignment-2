@@ -4,4 +4,4 @@ githubpassword: e70653f7c6e046e200acc53db73ab0e118ba4381
 docker_proxy_settings: "{\"proxies\":{\"default\":{\"httpProxy\":\"http://wwwproxy.unimelb.edu.au:8000\",\"httpsProxy\":\"http://wwwproxy.unimelb.edu.au:8000\",\"noProxy\":\"localhost,127.0.0.1,localaddress,172.16.0.0/12,.melbounre.rc.nectar.org.au,.storage.unimelb.edu.au,.cloud.unimelb.edu.au\"}}}"
 APP_SERVER_PORT: "8000"
 REACT_APP_PORT: "4000"
-COUCHDB_HOST: "http://admin:data-miner!@172.26.132.56:5984"
+COUCHDB_HOST: "http://admin:data-miner!@172.26.133.36:5984"

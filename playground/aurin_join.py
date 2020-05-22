@@ -46,8 +46,8 @@ for suburb in aurin:
         postcodes.pop(postcode)
     else:
         suburb_prop = suburb.value['properties']
-        #installations / tweet count
-        suburb_prop['ratio'] = -1
+        #ratio is 0 if the postcode doesnt exist
+        suburb_prop['ratio'] = 0 
         suburb.value['properties'] = suburb_prop
         joint.append(suburb.value)
         postcodes.pop(postcode)

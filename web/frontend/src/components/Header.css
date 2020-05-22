@@ -18,6 +18,7 @@ span {
 }
 
 .header h1 {
+    font-family: 'Montserrat', sans-serif;
     float: left;
     color: black;
     text-align: center;
@@ -30,6 +31,7 @@ span {
 }
 
 .header button {
+    font-family: 'Montserrat', sans-serif;
     background: transparent;
     border-style: solid;
     float: left;

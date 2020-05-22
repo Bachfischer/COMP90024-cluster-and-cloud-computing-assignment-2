@@ -27,7 +27,7 @@
     body: "{\"action\":\"add_node\",\"host\":\"{{ inventory_hostname }}\",\"port\":\"5984\",\"username\":\"{{ user }}\",\"password\":\"{{ pass }}\"}"
 
 
-- name: Empy request to avoid error messages when finishing cluster setup
+- name: Empty request to avoid error messages when finishing cluster setup
   uri:
     url: http://{{ masternode }}:5984/
     method: GET
