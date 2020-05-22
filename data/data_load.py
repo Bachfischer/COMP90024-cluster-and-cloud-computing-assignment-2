@@ -25,8 +25,14 @@ class AurinDataLoad():
 
     # finds the name of the file array based on the specificied area
     def find_file_names(self):
-        if self.area == "melbourne":
+        if self.area == "adelaide":
+            return data_constants.adelaide_file_names
+        elif self.area == "brisbane":
+            return data_constants.brisbane_file_names
+        elif self.area == "melbourne":
             return data_constants.melbourne_file_names
+        elif self.area == "perth":
+            return data_constants.perth_file_names
         elif self.area == "sydney":
             return data_constants.sydney_file_names
         else:
@@ -52,11 +58,12 @@ class AurinDataLoad():
 
 # Main method
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        area_selection = sys.argv[1]
-        data_loader = AurinDataLoad(area_selection)
+    city = "brisbane"
+    data_loader = AurinDataLoad(city)
+    aggregated_data = data_loader.aggregate_aurin_data()
+    data_loader.write_to_csv(aggregated_data)
+    '''for city in data_constants.city_names:
+        print("loading data for " + city)
+        data_loader = AurinDataLoad(city)
         aggregated_data = data_loader.aggregate_aurin_data()
-        data_loader.write_to_csv(aggregated_data)
-    else:
-        # return error message?
-        data_loader = AurinDataLoad(area_selection)
+        data_loader.write_to_csv(aggregated_data)'''
