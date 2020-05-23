@@ -61,8 +61,6 @@ def get_twitter_auth_client():
 			time.sleep(180)
 			
 
-
-
 def get_city_to_search():
 	database_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
 	cities=database_client.get_query_result(CITIES_DATABASE,{'in_use': {'$eq': False }})
@@ -102,77 +100,78 @@ def choose_cursor(database_client,auth,city,search_term):
 		else:
 			return update_cursor(auth.search,search_term,create_geocode([city['lat'],city['long']],"100km"),None,None)
 
+def main():
+	# db_client = DBClient('admin', 'data-miner!', url='http://172.26.132.56:5984/')
+	search_term=get_search_term()
+	# search_term="climatechange" or "globalwarming" or "climateaction" or "climatejustice"
 
-# db_client = DBClient('admin', 'data-miner!', url='http://172.26.132.56:5984/')
-search_term=get_search_term()
-# search_term="climatechange" or "globalwarming" or "climateaction" or "climatejustice"
+	auth,credential_id=get_twitter_auth_client()
+	print("got auth")
+	city=get_city_to_search()
+	print("got city")
+	print(city["_id"])
+	db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
+	currentCursor=choose_cursor(db_client,auth,city,search_term)
+	min_id=get_last_tweet_id(db_client,city['_id'])
+	db_client.close_connection()
+	tweets=currentCursor.items()
 
-auth,credential_id=get_twitter_auth_client()
-print("got auth")
-city=get_city_to_search()
-print("got city")
-print(city["_id"])
-db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
-currentCursor=choose_cursor(db_client,auth,city,search_term)
-min_id=get_last_tweet_id(db_client,city['_id'])
-db_client.close_connection()
-tweets=currentCursor.items()
-
-while True:
-	try:
-		print("here to add")
-		for tweet in tweets:
-			t=json.loads(json.dumps(tweet._json))
-			myObject=None
-			if t['coordinates']!=None:
-				myObject=Tweet_Object(str(tweet.id),city['_id'],str(t['coordinates']['coordinates'][1]),str(t['coordinates']['coordinates'][0]),json.dumps(tweet._json),tweet.created_at,True)
-			else:
-				myObject=Tweet_Object(str(tweet.id),city['_id'],city['lat'],city['long'],json.dumps(tweet._json),tweet.created_at,False)
+	while True:
+		try:
+			print("here to add")
+			for tweet in tweets:
+				t=json.loads(json.dumps(tweet._json))
+				myObject=None
+				if t['coordinates']!=None:
+					myObject=Tweet_Object(str(tweet.id),city['_id'],str(t['coordinates']['coordinates'][1]),str(t['coordinates']['coordinates'][0]),json.dumps(tweet._json),tweet.created_at,True)
+				else:
+					myObject=Tweet_Object(str(tweet.id),city['_id'],city['lat'],city['long'],json.dumps(tweet._json),tweet.created_at,False)
+				db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
+				if db_client.add_record(REPOSITORY_DATABASE,jsons.dump(myObject)):
+					print("tweet added")
+					if int(city['max_id'])<tweet.id:
+						city['max_id']=str(tweet.id)
+				db_client.close_connection()
+			time.sleep(random.randint(0,4))
 			db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
-			if db_client.add_record(REPOSITORY_DATABASE,jsons.dump(myObject)):
-				print("tweet added")
-				if int(city['max_id'])<tweet.id:
-					city['max_id']=str(tweet.id)
-			db_client.close_connection()
-		time.sleep(random.randint(0,4))
-		db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
-		
-		if min_id==get_last_tweet_id(db_client,city['_id']) and len(city['available_options'])==3:
-			city['available_options'].remove('back')
-
-		db_client.modify_record(CITIES_DATABASE,city['_id'],['in_use','last_used','max_id','available_options'],[False,datetime.datetime.now().strftime(datetimeFormat),city['max_id'],city['available_options']])
-		db_client.close_connection()
-		city=get_city_to_search()
-		print("got city")
-		print(city["_id"])
-		search_term=get_search_term()
-		db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
-		currentCursor=choose_cursor(db_client,auth,city,search_term)
-		min_id=get_last_tweet_id(db_client,city['_id'])
-		db_client.close_connection()
-		tweets=currentCursor.items()
 			
-	except tweepy.TweepError as e:
-		print(e)
-		time.sleep(random.randint(0,4))
-		db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
-		if min_id==get_last_tweet_id(db_client,city['_id']) and len(city['available_options'])==3:
-			city['available_options'].remove('back')
-		db_client.modify_record(CREDENTIALS_DATABASE,credential_id,['in_use','last_used'],[False,datetime.datetime.now().strftime(datetimeFormat)])
-		db_client.modify_record(CITIES_DATABASE,city['_id'],['in_use','last_used','max_id','available_options'],[False,datetime.datetime.now().strftime(datetimeFormat),city['max_id'],city['available_options']])
-		db_client.close_connection()
-		auth,credential_id=get_twitter_auth_client()
-		print("got auth")
-		city=get_city_to_search()
-		print("got city")
-		print(city["_id"])
-		
-		db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
-		currentCursor=choose_cursor(db_client,auth,city,search_term)
-		min_id=get_last_tweet_id(db_client,city['_id'])
-		db_client.close_connection()
-		tweets=currentCursor.items(100)
-	except StopIteration:
-		continue
+			if min_id==get_last_tweet_id(db_client,city['_id']) and len(city['available_options'])==3:
+				city['available_options'].remove('back')
 
+			db_client.modify_record(CITIES_DATABASE,city['_id'],['in_use','last_used','max_id','available_options'],[False,datetime.datetime.now().strftime(datetimeFormat),city['max_id'],city['available_options']])
+			db_client.close_connection()
+			city=get_city_to_search()
+			print("got city")
+			print(city["_id"])
+			search_term=get_search_term()
+			db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
+			currentCursor=choose_cursor(db_client,auth,city,search_term)
+			min_id=get_last_tweet_id(db_client,city['_id'])
+			db_client.close_connection()
+			tweets=currentCursor.items()
+				
+		except tweepy.TweepError as e:
+			print(e)
+			time.sleep(random.randint(0,4))
+			db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
+			if min_id==get_last_tweet_id(db_client,city['_id']) and len(city['available_options'])==3:
+				city['available_options'].remove('back')
+			db_client.modify_record(CREDENTIALS_DATABASE,credential_id,['in_use','last_used'],[False,datetime.datetime.now().strftime(datetimeFormat)])
+			db_client.modify_record(CITIES_DATABASE,city['_id'],['in_use','last_used','max_id','available_options'],[False,datetime.datetime.now().strftime(datetimeFormat),city['max_id'],city['available_options']])
+			db_client.close_connection()
+			auth,credential_id=get_twitter_auth_client()
+			print("got auth")
+			city=get_city_to_search()
+			print("got city")
+			print(city["_id"])
+			
+			db_client= DBClient(DATABASE_USERNAME, DATABASE_PASSWORD, url=DATABASE_URL)
+			currentCursor=choose_cursor(db_client,auth,city,search_term)
+			min_id=get_last_tweet_id(db_client,city['_id'])
+			db_client.close_connection()
+			tweets=currentCursor.items(100)
+		except StopIteration:
+			continue
 
+if __name__ == "__main__":
+    main()

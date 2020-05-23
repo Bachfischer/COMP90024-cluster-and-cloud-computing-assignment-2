@@ -69,18 +69,20 @@ def dataProcessing(couchdbdoc_id):
     except TypeError:
         pass
 
+def main():
+    while 1:
+        dataset = cdb.find(mango)
+        for dbname in dataset:
+            docu_id = dbname['_id']
+            doc_id.append(docu_id)
+        if len(doc_id) == 0:
+            print("Waiting for 1 minute")
+            time.sleep(60)
+            print("Checking Raw DB for new tweets....")
+        else:
+            for document in doc_id:
+                dataProcessing(document)   
+        doc_id = []
 
-while 1:
-    dataset = cdb.find(mango)
-    for dbname in dataset:
-        docu_id = dbname['_id']
-        doc_id.append(docu_id)
-    if len(doc_id) == 0:
-        print("Waiting for 1 minute")
-        time.sleep(60)
-        print("Checking Raw DB for new tweets....")
-    else:
-        for document in doc_id:
-            dataProcessing(document)   
-    doc_id = []
-
+if __name__ == "__main__":
+    main()

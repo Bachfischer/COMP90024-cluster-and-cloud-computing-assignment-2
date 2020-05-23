@@ -21,4 +21,4 @@ ADD . /
 # Install dependencies
 RUN pip install -r requirements.txt
 
-CMD [ "python", "./gpstopostcodeconversion.py"]
+CMD [ "python", "./main.py"]
