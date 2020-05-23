@@ -27,9 +27,7 @@ cdb = couchdb.Database("http://172.26.133.36:5984/twitter_raw_data")
 cdb.resource.credentials = (username, password)
 resultdb = couchdb.Database("http://172.26.133.36:5984/twitter_result_db")
 resultdb.resource.credentials = (username, password)
-doc_id = []
 mango = {'selector': {'Flag': 'N'}}
-
 
 def getZipCode(longfield, latfield, geolocation_enabled):
     location = geolocator.reverse(Point(latfield, longfield))
@@ -70,6 +68,7 @@ def dataProcessing(couchdbdoc_id):
         pass
 
 def main():
+    doc_id = []
     while 1:
         dataset = cdb.find(mango)
         for dbname in dataset:
