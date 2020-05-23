@@ -1,3 +1,19 @@
+#
+# Part of Assignment 2 - COMP90024 course at The University of Melbourne 
+#
+# Cluster and Cloud Computing - Team 24 
+# 
+# Authors: 
+#
+#  * Liam Simon (Student ID: 1128453)
+#  * Rejoy Benjamin (Student ID: 1110935)
+#  * Parikshit Diwan (Student ID: 1110497)
+#  * Colin McLean (Student ID: 1139518)
+#  * Matthias Bachfischer (Student ID: 1133751)
+#
+# Location: Melbourne
+#
+
 - hosts: localhost
   vars_files:
     - host_vars/research_cloud_resources.yaml
@@ -37,7 +53,7 @@
   gather_facts: true
 
   roles:
-#    - role: twitter-harvester-setup
+#        - role: twitter-harvester-setup
 
 
 # Install data analytics scripts and React frontend
@@ -48,4 +64,4 @@
 
   roles:
     - role: data-analytics-setup
-    - role: frontend-setup
+#    - role: frontend-setup

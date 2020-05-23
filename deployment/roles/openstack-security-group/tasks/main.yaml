@@ -1,4 +1,20 @@
+#
+# Part of Assignment 2 - COMP90024 course at The University of Melbourne 
+#
+# Cluster and Cloud Computing - Team 24 
+# 
+# Authors: 
+#
+#  * Liam Simon (Student ID: 1128453)
+#  * Rejoy Benjamin (Student ID: 1110935)
+#  * Parikshit Diwan (Student ID: 1110497)
+#  * Colin McLean (Student ID: 1139518)
+#  * Matthias Bachfischer (Student ID: 1133751)
+#
+# Location: Melbourne
+#
 ---
+
 # Create a security group
 - name: Create a security group
   os_security_group:
@@ -7,6 +23,7 @@
     state: present
   loop: '{{ security_groups }}'
 
+# Obtain list of security group names
 - name: Create a list of security group names
   set_fact:
     sg_names: '{{ sg_names|default([]) + [ item.name ] }}'
@@ -15,7 +32,7 @@
 - debug:
     msg: "Security group(s) {{ sg_names }} have been created."
 
-# Create security group rules
+# Create security group rules using remote_ip_prefix (internet-facing applications)
 - name: Create security group rules for internet-facing applications
   os_security_group_rule:
     security_group: '{{ item.name }}'
@@ -26,7 +43,7 @@
     state: present
   loop: '{{ security_group_rules_public }}'
 
-# Create security group rules
+# Create security group rules using remote_group prefix (inter-cluster communication)
 - name: Create security group rules for inter-cluster communication (e.g. CouchDB)
   os_security_group_rule:
     security_group: '{{ item.name }}'

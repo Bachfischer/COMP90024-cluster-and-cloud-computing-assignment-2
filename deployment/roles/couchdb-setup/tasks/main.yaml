@@ -1,13 +1,28 @@
+#
+# Part of Assignment 2 - COMP90024 course at The University of Melbourne 
+#
+# Cluster and Cloud Computing - Team 24 
+# 
+# Authors: 
+#
+#  * Liam Simon (Student ID: 1128453)
+#  * Rejoy Benjamin (Student ID: 1110935)
+#  * Parikshit Diwan (Student ID: 1110497)
+#  * Colin McLean (Student ID: 1139518)
+#  * Matthias Bachfischer (Student ID: 1133751)
+#
+# Location: Melbourne
+#
 ---
-# Stop existing docker containers and remove them (if any)
 
+# Stop existing Couch DB Docker containers and remove them (if any)
 - name: Stop CouchDB Docker container
   become: yes
   docker_container:
     name: couchdb
     state: absent
 
-# Create new docker container and start container
+# Create new docker container for CouchDB and start container
 - name: Create and start CouchDB Docker container
   become: yes
   docker_container:

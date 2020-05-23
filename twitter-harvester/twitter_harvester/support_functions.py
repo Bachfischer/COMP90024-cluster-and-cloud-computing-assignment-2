@@ -1,5 +1,23 @@
+#!/usr/bin/env python
+#
+# Part of Assignment 2 - COMP90024 course at The University of Melbourne 
+#
+# Cluster and Cloud Computing - Team 24 
+# 
+# Authors: 
+#
+#  * Liam Simon (Student ID: 1128453)
+#  * Rejoy Benjamin (Student ID: 1110935)
+#  * Parikshit Diwan (Student ID: 1110497)
+#  * Colin McLean (Student ID: 1139518)
+#  * Matthias Bachfischer (Student ID: 1133751)
+#
+# Location: Melbourne
+#
+
 import tweepy
 import datetime
+import string
 
 
 #generate auth objects
@@ -29,3 +47,10 @@ def update_cursor(auth_object,search_term,geocode,last_tweet_id,max_tweet_id):
 	else:
 		currentCursor=tweepy.Cursor(auth_object,q=search_term,geocode=geocode)
 	return currentCursor
+
+def decide_whether_text_match(text,search_terms):
+	for term in search_terms:
+		if term in ''.join(e for e in text.lower() if e.isalnum()):
+			return True
+	return False
+

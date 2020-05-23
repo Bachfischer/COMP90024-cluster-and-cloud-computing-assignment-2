@@ -1,4 +1,21 @@
+#
+# Part of Assignment 2 - COMP90024 course at The University of Melbourne 
+#
+# Cluster and Cloud Computing - Team 24 
+# 
+# Authors: 
+#
+#  * Liam Simon (Student ID: 1128453)
+#  * Rejoy Benjamin (Student ID: 1110935)
+#  * Parikshit Diwan (Student ID: 1110497)
+#  * Colin McLean (Student ID: 1139518)
+#  * Matthias Bachfischer (Student ID: 1133751)
+#
+# Location: Melbourne
+#
 ---
+
+# Add nodes to CouchDB cluster
 - name: Add nodes to CouchDB cluster
   uri:
     url: http://{{ masternode }}:5984/_cluster_setup
@@ -12,7 +29,7 @@
     body_format: json
     body: "{\"action\": \"enable_cluster\", \"bind_address\": \"0.0.0.0\", \"username\":\"{{ user }}\", \"password\": \"{{ pass }}\", \"port\": \"5984\", \"remote_node\": \"{{ inventory_hostname }}\", \"node_count\": \"3\",\"remote_current_user\": \"{{ user }}\", \"remote_current_password\":\"{{ pass }}\"}"
 
-
+# Join nodes to CouchDB cluster
 - name: Join nodes to CouchDB cluster
   uri:
     url: http://{{ masternode }}:5984/_cluster_setup
@@ -26,7 +43,7 @@
     body_format: json
     body: "{\"action\":\"add_node\",\"host\":\"{{ inventory_hostname }}\",\"port\":\"5984\",\"username\":\"{{ user }}\",\"password\":\"{{ pass }}\"}"
 
-
+# Empty request to avoid error messages when finishing cluster setup
 - name: Empty request to avoid error messages when finishing cluster setup
   uri:
     url: http://{{ masternode }}:5984/
@@ -36,6 +53,7 @@
     force_basic_auth: yes
   run_once: true
 
+# Finish cluster setup
 - name: Finish cluster setup
   uri:
     url: http://{{ masternode }}:5984/_cluster_setup

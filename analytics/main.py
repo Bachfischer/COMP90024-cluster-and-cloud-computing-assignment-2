@@ -1,3 +1,20 @@
+#!/usr/bin/env python
+#
+# Part of Assignment 2 - COMP90024 course at The University of Melbourne 
+#
+# Cluster and Cloud Computing - Team 24 
+# 
+# Authors: 
+#
+#  * Liam Simon (Student ID: 1128453)
+#  * Rejoy Benjamin (Student ID: 1110935)
+#  * Parikshit Diwan (Student ID: 1110497)
+#  * Colin McLean (Student ID: 1139518)
+#  * Matthias Bachfischer (Student ID: 1133751)
+#
+# Location: Melbourne
+#
+
 import couchdb
 from geopy import Point
 from geopy.geocoders import Nominatim
@@ -17,7 +34,7 @@ mango = {'selector': {'Flag': 'N'}}
 def getZipCode(longfield, latfield, geolocation_enabled):
     location = geolocator.reverse(Point(latfield, longfield))
     try:
-        if geolocation_enabled is "true":
+        if geolocation_enabled.lower() == 'true':
             postcode = location.raw['address']['postcode']
             return postcode
         else:
@@ -52,18 +69,20 @@ def dataProcessing(couchdbdoc_id):
     except TypeError:
         pass
 
+def main():
+    while 1:
+        dataset = cdb.find(mango)
+        for dbname in dataset:
+            docu_id = dbname['_id']
+            doc_id.append(docu_id)
+        if len(doc_id) == 0:
+            print("Waiting for 1 minute")
+            time.sleep(60)
+            print("Checking Raw DB for new tweets....")
+        else:
+            for document in doc_id:
+                dataProcessing(document)   
+        doc_id = []
 
-while 1:
-    dataset = cdb.find(mango)
-    for dbname in dataset:
-        docu_id = dbname['_id']
-        doc_id.append(docu_id)
-    if len(doc_id) == 0:
-        print("Waiting for 1 minute")
-        time.sleep(60)
-        print("Checking Raw DB for new tweets....")
-    else:
-        for document in doc_id:
-            dataProcessing(document)   
-    doc_id = []
-
+if __name__ == "__main__":
+    main()

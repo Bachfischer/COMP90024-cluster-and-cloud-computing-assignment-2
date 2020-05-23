@@ -24,15 +24,7 @@ twitter_database=database_client.get_database(REPOSITORY_DATABASE)
 
 
 for doc in twitter_database:
-	tweet=json.loads(doc['tweet'])
-	print("Processing document: "  + doc['_id'])
-	if tweet['coordinates']!=None:
-		print("Found real coordinates")
-		coordinates=tweet['coordinates']['coordinates']
-		doc['latitude']=str(coordinates[1])
-		doc['longitude']=str(coordinates[0])
-		doc['geo_enabled']=True
-	else:
-		doc['geo_enabled']=False
+	print("Processing document: " +  doc['_id'])
+	doc['Flag']="N"
 	doc.save()
 database_client.close_connection()
