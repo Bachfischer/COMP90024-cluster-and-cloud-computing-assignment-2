@@ -1,0 +1,17 @@
+#
+# Part of Assignment 2 - COMP90024 course at The University of Melbourne 
+#
+# Cluster and Cloud Computing - Team 24 
+# 
+# Authors: 
+#
+#  * Liam Simon (Student ID: 1128453)
+#  * Rejoy Benjamin (Student ID: 1110935)
+#  * Parikshit Diwan (Student ID: 1110497)
+#  * Colin McLean (Student ID: 1139518)
+#  * Matthias Bachfischer (Student ID: 1133751)
+#
+# Location: Melbourne
+#
+---
+docker_proxy_settings: "{\"proxies\":{\"default\":{\"httpProxy\":\"http://wwwproxy.unimelb.edu.au:8000\",\"httpsProxy\":\"http://wwwproxy.unimelb.edu.au:8000\",\"noProxy\":\"localhost,127.0.0.1,localaddress,172.16.0.0/12,.melbounre.rc.nectar.org.au,.storage.unimelb.edu.au,.cloud.unimelb.edu.au\"}}}"

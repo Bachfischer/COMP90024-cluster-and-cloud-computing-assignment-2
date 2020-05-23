@@ -1,0 +1,67 @@
+#
+# Part of Assignment 2 - COMP90024 course at The University of Melbourne 
+#
+# Cluster and Cloud Computing - Team 24 
+# 
+# Authors: 
+#
+#  * Liam Simon (Student ID: 1128453)
+#  * Rejoy Benjamin (Student ID: 1110935)
+#  * Parikshit Diwan (Student ID: 1110497)
+#  * Colin McLean (Student ID: 1139518)
+#  * Matthias Bachfischer (Student ID: 1133751)
+#
+# Location: Melbourne
+#
+---
+# Clone source code repository
+- name: Clone the code repository into home directory
+  git:
+    repo: "https://github.com/Bachfischer/cluster-and-cloud-computing-assignment-2.git"
+    dest: ~/cluster-and-cloud-computing-assignment-2
+  environment: "{{ proxy_env }}"
+  become: true
+
+# Create Docker config directory
+- name: Make sure that Docker config directory exists
+  become: yes
+  file:
+    path: '~/.docker'
+    state: 'directory'
+
+# Set Docker proxy for University of Melbourne Research Cloud
+- name: Ensure Docker client proxy settings are present on the server
+  become: yes
+  copy:
+    content: "{{ docker_proxy_settings }}"
+    dest: ~/.docker/config.json
+
+# Build Docker image for Twitter data analytics
+- name: Build an image and push it to local repo
+  docker_image:
+    build:
+      path: '~/cluster-and-cloud-computing-assignment-2/aurin-twitter-analytics/'
+      pull: yes
+    name: cloud-assignment-2/aurin-twitter-analytics
+    tag: latest
+    source: build
+    force: yes
+  become: yes
+  environment: "{{ proxy_env }}"
+
+# Stop Docker container for data analytics scripts
+- name: Stop Data Analytics Docker container
+  become: yes
+  docker_container:
+    name: aurin-twitter-analytics
+    state: absent
+
+# Create new Docker container for data analytics scripts and start container
+- name: Create and start Data Analytics Docker container
+  become: yes
+  docker_container:
+    name: data-analytics
+    image: cloud-assignment-2/aurin-twitter-analytics
+    state: started
+    pull: false
+    recreate: true
