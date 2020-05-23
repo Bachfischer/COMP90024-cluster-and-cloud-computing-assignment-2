@@ -7,7 +7,7 @@ router.get("/",async function(req, res, next){
     var shape = null
 
     let id = req.query.id;
-    const nano = require("nano")("http://admin:data-miner!@172.26.132.56:5984");
+    const nano = require("nano")("http://admin:data-miner!@172.26.133.36:5984");
     var db = nano.use('geo_json')
     await db.view('geo_json',"id",{key: 3458,include_docs: true
     }, function(err,res){

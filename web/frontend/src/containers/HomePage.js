@@ -1,6 +1,5 @@
 import React from 'react';
 import { compose, withProps } from "recompose"
-import { useAsync } from 'react-async'
 import { 
   Polygon,
   GoogleMap,
@@ -16,8 +15,7 @@ class MapSetup extends React.Component {
     this.state = { 
       counter: 0,
       regions: null,
-      min_ratio: 0,
-      max_ratio: 0};
+      centre:{ lat:  -38.0,lng: 145.1} };
   }
   Map = compose(
       withProps({
@@ -31,7 +29,7 @@ class MapSetup extends React.Component {
       )((props) => 
         <GoogleMap
           defaultZoom={9}
-          defaultCenter={{ lat:  -38.0,lng: 145.1}}
+          defaultCenter={this.state.centre}
         >
           {this.renderRegions()}
         </GoogleMap>
@@ -39,15 +37,18 @@ class MapSetup extends React.Component {
 
   renderRegions(){
     return this.state.regions.map(regionJ =>{
+      if(regionJ._id < 10000){
+        return(<Polygon key={counter++}/>)
+      }
       //let region = JSON.parse(JSON.stringify(regionJ))
       let coordinates = regionJ.geometry.coordinates
       let coordArrOuter = []
       let coordArrInner = []
-      coordinates.map(coordinate => {
+      coordinates.map((coordinate) => {
         coordArrInner = []
         if(coordinate[0] instanceof(Array)){
           if(coordinate[0][0] instanceof(Array)){
-            coordinate[0].map(coordinner => {
+            coordinate[0].map((coordinner) => {
               coordArrInner.push({lat:coordinner[1],lng:coordinner[0]})
             })
           }
@@ -60,7 +61,34 @@ class MapSetup extends React.Component {
         }
         coordArrOuter.push(coordArrInner)
       })
-      let colour = regionJ.properties.ratio.toString(16).join('0000')
+      
+      let num = Math.floor(regionJ.properties.ratio)
+      let red,blue,green = 0
+      if(num <= 255){
+        red = num
+        green = 0
+        blue = 255
+      }
+      else{
+        red = 255
+        green = 0
+        blue = 255-(num-255)
+      }
+      if(red<16){
+        red ='0'.concat(green.toString(16))
+      }
+      else{
+        red = red.toString(16)
+      }
+      if(blue<16){
+        blue ='0'.concat(green.toString(16))
+      }
+      else{
+        blue = blue.toString(16)
+      }
+      green ='0'.concat(green.toString(16))
+      let colour = '#'.concat(red).concat(green).concat(blue)
+      console.log(colour)
       if(coordArrOuter[0] instanceof(Array)){
         return (
           coordArrOuter.map(coord => (
@@ -71,6 +99,8 @@ class MapSetup extends React.Component {
               strokeColor: colour,
               strokeOpacity: 1,
               strokeWeight: 2,
+              fillColor: colour,
+              fillOpacity: 0.35,
               icons: [{
                 icon: "hello",
                 offset: '0',
@@ -92,6 +122,8 @@ class MapSetup extends React.Component {
               strokeColor: colour,
               strokeOpacity: 1,
               strokeWeight: 2,
+              fillColor: colour,
+              fillOpacity: 0.35,
               icons: [{
                 icon: "hello",
                 offset: '0',
@@ -114,40 +146,49 @@ class MapSetup extends React.Component {
   }
   */
   async get_all(){
-    let message = await fetch("http://172.26.130.163:8000/get_all")
+    let message = await fetch("http://localhost:4000/get_all_cities")
     let text = await message.json()
     console.log(text)
     this.find_ratio(text)
   }
 
-  find_ratio(suburbs){
+  async find_ratio(pcs){
+    let suburbs = await pcs
     let min_ratio = 1000000
     let max_ratio = 0
     let pc_ratio = []
-    for(let i = 0; i=suburbs.length();i++){
-      let temp_ratio = suburbs[i].properties.ratio
+    suburbs.forEach(suburb =>{
+      let temp_ratio = suburb.properties.ratio
       if(temp_ratio > max_ratio){
         max_ratio = temp_ratio 
       }
       if(temp_ratio < min_ratio){
         min_ratio = temp_ratio 
       }
-      pc_ratio.push([suburbs._id,temp_ratio])
-    }
-    for(let i = 0; i=pc_ratio.length();i++){
-      pc_ratio[i][1] = 255 *((pc_ratio[i][1] - min_ratio)/(max_ratio-min_ratio))
-    }
-    for(let i = 0; i=suburbs.length();i++){
-      for(let j = 0; i=suburbs.length();i++){
-        if(suburbs[i]._id === pc_ratio[j][0]){
-          suburbs[i].properties.ratio = pc_ratio[j][1]
-          break 
-        }
+      pc_ratio.push([suburb._id,temp_ratio])
+    })
+    console.log(pc_ratio)
+    pc_ratio.forEach(pc =>{
+      let z = 510 *((pc[1]/(max_ratio)))
+      if(z != 0){
+        console.log(z)
       }
-    }
+      
+      pc[1] = z
+    })
+    suburbs.forEach(suburb =>{
+      pc_ratio.forEach(pc =>{
+        let id = suburb._id
+        if(id === pc[0]){
+          suburb.properties.ratio = pc[1]
+        }
+      })
+    })
+    console.log(suburbs)
     this.setState({regions: suburbs})
   }
 
+  
 
   async componentDidMount() {
       //this.callAPI();
@@ -174,4 +215,5 @@ class MapSetup extends React.Component {
   }
 
 }
+
 export default MapSetup;

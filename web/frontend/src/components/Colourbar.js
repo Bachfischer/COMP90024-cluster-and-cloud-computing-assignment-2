@@ -5,7 +5,7 @@ const ColourBar = () => {
     return (
         <div>
             <div id='bar_container'>
-                <p id='title'>Tweet to installation</p>
+                <p id='title'>Tweet to Installation ratio</p>
                 <div id='gradient'></div> 
                 <p id='lower'>Lower</p>
                 <p id='higher'>Higher</p>

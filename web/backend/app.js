@@ -9,6 +9,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var get_all = require("./routes/get_all");
+var get_all_cities = require("./routes/get_all_cities");
+var get_all_suburbs = require("./routes/get_all_suburbs");
 var testAPI = require("./routes/test.js");
 var couchDB = require("./routes/couch.js");
 var app = express();
@@ -28,6 +30,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/get_all',get_all);
+app.use('/get_all_cities',get_all_cities);
+app.use('/get_all_suburbs',get_all_suburbs);
 app.use('/test', testAPI);
 app.use('/couch', couchDB);
 
