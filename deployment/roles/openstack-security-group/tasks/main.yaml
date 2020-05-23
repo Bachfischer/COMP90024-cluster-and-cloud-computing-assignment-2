@@ -14,6 +14,7 @@
 # Location: Melbourne
 #
 ---
+
 # Create a security group
 - name: Create a security group
   os_security_group:
@@ -22,6 +23,7 @@
     state: present
   loop: '{{ security_groups }}'
 
+# Obtain list of security group names
 - name: Create a list of security group names
   set_fact:
     sg_names: '{{ sg_names|default([]) + [ item.name ] }}'
@@ -30,7 +32,7 @@
 - debug:
     msg: "Security group(s) {{ sg_names }} have been created."
 
-# Create security group rules
+# Create security group rules using remote_ip_prefix (internet-facing applications)
 - name: Create security group rules for internet-facing applications
   os_security_group_rule:
     security_group: '{{ item.name }}'
@@ -41,7 +43,7 @@
     state: present
   loop: '{{ security_group_rules_public }}'
 
-# Create security group rules
+# Create security group rules using remote_group prefix (inter-cluster communication)
 - name: Create security group rules for inter-cluster communication (e.g. CouchDB)
   os_security_group_rule:
     security_group: '{{ item.name }}'

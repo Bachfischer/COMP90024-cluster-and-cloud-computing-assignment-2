@@ -18,6 +18,7 @@
   setup:
     gather_subset: all
 
+# Install general dependencies 
 - name: Install dependencies
   tags: always
   become: yes
@@ -28,6 +29,7 @@
     update_cache: yes
   environment: "{{ proxy_env }}"
 
+# Update Python pip
 - name: Update pip
   tags: always
   become: yes

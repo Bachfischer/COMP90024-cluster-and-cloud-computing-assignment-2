@@ -14,25 +14,29 @@
 # Location: Melbourne
 #
 ---
+# Clone source code repository
 - name: Clone the code repository into home directory
   git:
-    repo: "https://{{ githubuser | urlencode }}:{{ githubpassword | urlencode }}@github.com/Bachfischer/cluster-and-cloud-computing-assignment-2.git"
+    repo: "https://github.com/Bachfischer/cluster-and-cloud-computing-assignment-2.git"
     dest: ~/cluster-and-cloud-computing-assignment-2
   environment: "{{ proxy_env }}"
   become: true
 
+# Create Docker config directory
 - name: Make sure that Docker config directory exists
   become: yes
   file:
     path: '~/.docker'
     state: 'directory'
 
+# Set Docker proxy for University of Melbourne Research Cloud
 - name: Ensure Docker client proxy settings are present on the server
   become: yes
   copy:
     content: "{{ docker_proxy_settings }}"
     dest: ~/.docker/config.json
 
+# Build Docker image for web frontend and web backend
 - name: Configure compose
   become: yes
   template:
@@ -41,7 +45,7 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
-
+# Run Docker compose to activate web frontend and web backend
 - name: Run docker compose
   become: yes
   docker_compose:

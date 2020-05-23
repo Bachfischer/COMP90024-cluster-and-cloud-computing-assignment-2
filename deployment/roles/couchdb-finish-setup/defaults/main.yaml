@@ -14,4 +14,6 @@
 # Location: Melbourne
 #
 ---
+
+# Use first node in hosts list as masternode for CouchDB
 masternode: "{{ groups['TwitterMining'][0] }}"
