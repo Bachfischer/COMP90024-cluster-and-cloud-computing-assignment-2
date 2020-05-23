@@ -40,7 +40,7 @@
 - name: Build an image and push it to local repo
   docker_image:
     build:
-      path: '~/cluster-and-cloud-computing-assignment-2/aurin-twitter-analytics/'
+      path: '~/cluster-and-cloud-computing-assignment-2/analytics/aurin-twitter-analytics/'
       pull: yes
     name: cloud-assignment-2/aurin-twitter-analytics
     tag: latest
