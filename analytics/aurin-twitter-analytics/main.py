@@ -54,7 +54,7 @@ def main():
                 #installations / tweet count
                 
                 print(postcodes.get(postcode),float(suburb_prop['0total_ins']))
-                ratio = postcodes.get(postcode)/float(suburb_prop['0total_ins'])
+                ratio = float(suburb_prop['0total_ins'])/postcodes.get(postcode)
                 suburb_prop['ratio'] = ratio
                 suburb_prop['tweet_count'] = postcodes.get(postcode)
                 suburb.value['properties'] = suburb_prop
