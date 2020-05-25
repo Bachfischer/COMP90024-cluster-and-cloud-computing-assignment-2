@@ -60,7 +60,7 @@
 - name: Create and start Data Analytics Docker container
   become: yes
   docker_container:
-    name: data-analytics
+    name: aurin-twitter-analytics
     image: cloud-assignment-2/aurin-twitter-analytics
     state: started
     pull: false
