@@ -31,4 +31,5 @@ This repository contains the source code for assignment 2 of the COMP90024 Clust
 ## System architecture
 
 The system architecture designed for this project is deployed on the [University of Melbourne Research Cloud](https://dashboard.cloud.unimelb.edu.au/). It makes use of various technologies such as [Ansible](https://www.ansible.com), [Docker](https://www.docker.com) and [Apache CouchDB](https://couchdb.apache.org). 
+
 For further information, please refer to the project report attached to this submission.
