@@ -45,13 +45,13 @@ export default function DataTable(props){
         for(i = 0; i < regions.length; i++){
             if(regions[i]._id > 10000){
                 if(regions[i]._id == "12000"){
-                    regions[i]._id = 'Melbourne'
+                    regions[i]._id = 'Sydney'
                 }
                 if(regions[i]._id === "12601"){
                     regions[i]._id = 'Canberra'
                 }
                 if(regions[i]._id === "13000"){
-                    regions[i]._id = 'Sydney'
+                    regions[i]._id = 'Melbourne'
                 }
                 if(regions[i]._id === "15000"){
                     regions[i]._id = 'Adelaide'

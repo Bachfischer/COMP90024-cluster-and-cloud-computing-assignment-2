@@ -85,6 +85,7 @@ class MapSetup extends React.Component {
       })
       let num = Math.floor(regionJ.properties.ratio)
       num = 255 -num
+      console.log(regionJ._id,regionJ.properties.ratio)
       let red,blue,green = 0
       if(num < 16){
         green = '0'.concat(num.toString(16))
@@ -187,6 +188,8 @@ class MapSetup extends React.Component {
     let max_ratio = 0
     let pc_ratio = []
     suburbs.forEach(suburb =>{
+      let temp = JSON.parse(JSON.stringify(suburb))
+      console.log(temp._id,temp.properties.ratio)
       let temp_ratio = suburb.properties.ratio
       if(temp_ratio > max_ratio){
         max_ratio = temp_ratio 
@@ -199,8 +202,9 @@ class MapSetup extends React.Component {
     pc_ratio.forEach(pc =>{
       let top = pc[1] - min_ratio
       let bottom = max_ratio - min_ratio
-      let z = 255*(top/bottom)
-      pc[1] = z
+      let z = (top/bottom)
+      console.log("pc",pc[0],z,"top",top,"bottom",bottom)
+      pc[1] = 255*z
     })
     console.log(pc_ratio)
     suburbs.forEach(suburb =>{
@@ -215,23 +219,10 @@ class MapSetup extends React.Component {
     this.setState({regions: suburbs})
   }
 
-  
-
   async componentDidMount() {
-      //this.callAPI();
       this.get_all();
   }
 
-  delayedShowMarker = () => {
-    setTimeout(() => {
-      this.setState({ isMarkerShown: true })
-    }, 3000)
-  }
-
-  handleMarkerClick = () => {
-    this.setState({ isMarkerShown: false })
-    this.delayedShowMarker()
-  }
   render(){
     if(this.state.regions && this.state.initial){
       return(

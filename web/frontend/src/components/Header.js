@@ -36,6 +36,12 @@ const Header = () => {
             <Link to='/Suburbs'>
                 <Button text="Suburbs" />
             </Link>
+            <Link  to='/Analytics'>
+                <Button text="Analytics" />
+            </Link>
+            <Link  to='/Word_Cloud'>
+                <Button text="Word Cloud" />
+            </Link>
             <Link  to='/Members'>
                 <Button text="Members" />
             </Link>
