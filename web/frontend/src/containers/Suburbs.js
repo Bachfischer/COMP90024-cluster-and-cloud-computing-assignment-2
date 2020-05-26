@@ -60,18 +60,11 @@ class MapSetup extends React.Component {
         <GoogleMap
           defaultZoom={9}
           center={this.state.centre}
-          onGoogleApiLoaded={({ map,maps}) => this.apiIsLoaded(map,maps)}
         >
           {console.log(this.state.centre)}
           {this.renderRegions()}
         </GoogleMap>
       )
-  apiIsLoaded(map,maps){
-    console.log(map)
-    if(map){
-      map.panTo(this.state.centre)
-    }
-  }
   renderRegions(){
     return this.state.regions.map(regionJ =>{
       if(regionJ._id > 10000){
@@ -112,7 +105,6 @@ class MapSetup extends React.Component {
       }
       red = 'ff'
       let colour = '#'.concat(red).concat(green).concat(blue)
-      console.log(colour)
       if(coordArrOuter[0] instanceof(Array)){
         return (
           coordArrOuter.map(coord => (
@@ -209,7 +201,6 @@ class MapSetup extends React.Component {
   }
   async changeLocation(location){
     this.setState({initial: null})
-    console.log("here")
     let message = await fetch("http://localhost:4000/get_all_suburbs?city=" +location.toLowerCase())
     let text = await message.json()
     console.log(text)
@@ -218,6 +209,7 @@ class MapSetup extends React.Component {
     this.setState({initial: init})
   }
   render(){
+    let button_counter = 0
     if(this.state.initial && this.state.regions){ 
       if(this.state.change === false){
         return(
@@ -227,7 +219,7 @@ class MapSetup extends React.Component {
             <div id="loc-buttons">
               {locations.map(location =>{
                 return(
-                  <button id="move" onClick={() =>{
+                  <button key={button_counter++} id="move" onClick={() =>{
                     this.setState({centre:{ lat:  location[1],lng: location[2]} ,change: true,});
                     this.changeLocation(location[0])}}
                   >
@@ -251,7 +243,7 @@ class MapSetup extends React.Component {
             <div id="loc-buttons">
               {locations.map(location =>{
                 return(
-                  <button id='move' onClick={() =>{
+                  <button key={button_counter++} id='move' onClick={() =>{
                     this.setState({centre:{ lat:  location[1],lng: location[2]} ,change: true,})}}
                   >
                     {location[0]}
@@ -270,12 +262,12 @@ class MapSetup extends React.Component {
         return(
           <div id="big-body">
             <div id='loader-div'>
-              <div class='loader'></div>
+              <div className='loader'></div>
             </div>
             <div id="loc-buttons">
               {locations.map(location =>{
                 return(
-                  <button id='move' onClick={() =>{
+                  <button key={button_counter++} id='move' onClick={() =>{
                     this.setState({centre:{ lat:  location[1],lng: location[2]} ,change: true,})}}
                   >
                     {location[0]}

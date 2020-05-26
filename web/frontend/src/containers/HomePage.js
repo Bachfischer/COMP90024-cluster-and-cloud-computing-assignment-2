@@ -15,13 +15,14 @@
 * Location: Melbourne    
 *   
 */
-import React from 'react';
+import React, { useState } from 'react';
 import { compose, withProps } from "recompose"
 import { 
   Polygon,
   GoogleMap,
   withScriptjs,
-  withGoogleMap
+  withGoogleMap,
+  InfoWindow
   } from "react-google-maps"
 
 import ColourBar from '../components/Colourbar'
@@ -34,13 +35,14 @@ class MapSetup extends React.Component {
       counter: 0,
       regions: null,
       initital: null,
+      selectedCentre: false,
       centre:{ lat:  -35.037633,lng: 144.739408} 
     }
   }
   Map = compose(
       withProps({
         googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyCQ1Ys3Sw7bLIhLhtIoTSB2vupL1ZjZOko&v=3.exp&libraries=geometry,drawing,places",
-        loadingElement:<div style ={{height: '100%' }}/>,
+        loadingElement:<div style ={{height: '800px' }}/>,
         containerElement: <div style ={{height: '800px' }}/>,
         mapElement: <div style ={{height: '100%' }}/>,
       }),
@@ -100,6 +102,7 @@ class MapSetup extends React.Component {
         return (
           coordArrOuter.map(coord => (
           <Polygon
+            onMouseOver={this.setState({selectedCentre: true})}
             key = {counter++}
             paths ={coord}
             options={{
@@ -114,7 +117,19 @@ class MapSetup extends React.Component {
                 repeat: '10px'
               }]
             }}
-          />
+          >
+            {
+              this.state.selectedCentre && (<InfoWindow
+                onCloseClick={() =>{
+                  this.setState({selectedCentre:false})
+                }}
+                position={{
+                  lat:  -35.037633,lng: 144.739408
+                }}
+                >
+              </InfoWindow>)
+            }
+          </Polygon>
           ))
           
         )
@@ -123,8 +138,10 @@ class MapSetup extends React.Component {
         let coord = coordArrOuter
         return (
           <Polygon
+            onMouseOver={this.setState({selectedCentre: true})}
             key = {counter++}
             paths ={coord}
+            onClick={this.setState({selectedCentre:true})}
             options={{
               strokeColor: '000000',
               strokeOpacity: 5,
@@ -137,21 +154,25 @@ class MapSetup extends React.Component {
                 repeat: '10px'
               }]
             }}
-          />
+          >
+            {
+              this.state.selectedCentre && (<InfoWindow
+                onCloseClick={() =>{
+                  this.setState({selectedCentre:false})
+                }}
+                position={{
+                  lat:  -35.037633,lng: 144.739408
+                }}
+                >
+              </InfoWindow>)
+            }
+          </Polygon>
         )
       }
       }
     )
 
   }
-  /*
-  async callAPI() {
-    let message = await fetch("http://172.26.130.163:8000/test")
-    let text = await message.json()
-    console.log(text)
-    //this.setState({regions: text})
-  }
-  */
   async get_all(){
     let message = await fetch("http://localhost:4000/get_all_cities")
     let text = await message.json()
@@ -226,10 +247,14 @@ class MapSetup extends React.Component {
       )
     }
     else{
-      return(
-        <div>
-        </div>
-      )
+        return(
+          <div id="big-body">
+            <div id='loader-div'>
+              <div class='loader'></div>
+            </div>
+            <ColourBar/>
+          </div>
+        )
     }
   }
 

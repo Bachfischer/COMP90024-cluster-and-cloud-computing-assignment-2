@@ -18,7 +18,6 @@ router.get("/",async function(req, res, next){
     var db = nano.use('postcode_aurin')
     await db.view("get_all","cities").then((body) => {
         body.rows.forEach((doc) => {
-            console.log(doc.value);
             shape.push(doc.value);
         });
     });

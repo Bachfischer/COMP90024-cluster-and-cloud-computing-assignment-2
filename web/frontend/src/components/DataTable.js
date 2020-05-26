@@ -38,23 +38,27 @@ export default function DataTable(props){
             if(!regions[i].properties.hasOwnProperty('tweet_count')){
                 regions.splice(i,1);i--;
             }
+            if(regions.length === 0){
+                break;
+            }
+        }
+        for(i = 0; i < regions.length; i++){
             if(regions[i]._id > 10000){
-                console.log("hasdf")
-                if(regions[i]._id === 12000){
+                if(regions[i]._id == "12000"){
                     regions[i]._id = 'Melbourne'
                 }
-                if(regions[i]._id === 12601){
+                if(regions[i]._id === "12601"){
                     regions[i]._id = 'Canberra'
                 }
-                if(regions[i]._id === 13000){
+                if(regions[i]._id === "13000"){
                     regions[i]._id = 'Sydney'
                 }
-                if(regions[i]._id === 15000){
+                if(regions[i]._id === "15000"){
                     regions[i]._id = 'Adelaide'
                 }
             }
         }
-        console.log(regions)
+        let counter =0
         return (
             <div id='table_container'>
             <TableContainer>
@@ -69,7 +73,7 @@ export default function DataTable(props){
                     </TableHead>
                     <TableBody>
                         {regions.map((region) =>(
-                            <TableRow>
+                            <TableRow key={counter++}>
                                 <TableCell>{region._id}</TableCell>
                                 <TableCell>{Math.trunc(region.properties["0total_ins"])}</TableCell>
                                 <TableCell>{region.properties["tweet_count"]}</TableCell>

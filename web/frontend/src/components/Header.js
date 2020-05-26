@@ -22,14 +22,17 @@ import './Header.css'
 const Button = (props) => (
     <button >{props.text}</button>
 )
-
+//<h1>E</h1><h4>nvironmental </h4><h1>S</h1><h4>ustainability </h4><h1>T</h1><h4>weet </h4><h1>A</h1><h4>nalysis</h4>
 const Header = () => {
     return (
         <div className='header'>
             <Link id="heading" to='/'>
-                <h1>CCC Assignment</h1>
+                <h1>ESTA</h1><h5>Environmental Sustainability Tweet Analysis</h5>
             </Link>  
             <div className='header-buttons'>
+            <Link to='/'>
+                <Button text="Home" />
+            </Link>
             <Link to='/Suburbs'>
                 <Button text="Suburbs" />
             </Link>

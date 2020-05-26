@@ -23,20 +23,29 @@
     width: 100%;
     height: 70px;
     z-index: 10;
-    background: #333;
+    background: #00203FFF;
     -webkit-box-shadow: 0 7px 8px rgba(0, 0, 0, 0.12);
     -moz-box-shadow: 0 7px 8px rgba(0, 0, 0, 0.12);
     box-shadow: 0 7px 8px rgba(0, 0, 0, 0.12);
 }
 
 .header h1 {
-    font-family: 'Montserrat', sans-serif;
     float: left;
-    color: white;
+    font-family: 'Montserrat', sans-serif;
+    color: #ADEFD1FF;
     text-align: center;
     margin-top:15px;
 }
 
+.header h4,h5 {
+    font-family: 'Montserrat', sans-serif;
+    height:20%;
+    border-bottom: 10px solid currentColor;
+    border-color: #ADEFD1FF;
+    float: left;
+    color: #ddd;
+    text-align: center;
+}
 .header-buttons{
     float: right;
     height: 100%;
@@ -44,10 +53,10 @@
 
 .header button {
     font-family: 'Montserrat', sans-serif;
-    background: #333;
+    background: #00203FFF;
     border-style: solid;
     float: left;
-    color: white;
+    color: #ADEFD1FF;
     border-color: transparent;
     text-decoration: none;
     text-align: center;
