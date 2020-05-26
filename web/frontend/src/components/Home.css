@@ -15,38 +15,13 @@
 * Location: Melbourne    
 *   
 */
-.header {
-    text-align: justify;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 70px;
-    z-index: 10;
-    background: #333;
-    -webkit-box-shadow: 0 7px 8px rgba(0, 0, 0, 0.12);
-    -moz-box-shadow: 0 7px 8px rgba(0, 0, 0, 0.12);
-    box-shadow: 0 7px 8px rgba(0, 0, 0, 0.12);
-}
+::-webkit-scrollbar {display:none;}
 
-.header h1 {
-    font-family: 'Montserrat', sans-serif;
-    float: left;
-    color: white;
-    text-align: center;
-    margin-top:15px;
-}
-
-.header-buttons{
-    float: right;
-    height: 100%;
-}
-
-.header button {
+#move{
+    display: auto;
+    width: 20%;
     font-family: 'Montserrat', sans-serif;
     background: #333;
-    border-style: solid;
-    float: left;
     color: white;
     border-color: transparent;
     text-decoration: none;
@@ -54,12 +29,39 @@
     padding: 12px;
     font-size: 18px; 
     line-height: 25px;
-    border-radius: 4px;
-    height: 100%;
 }
-
-.header button:hover{
+#move:hover{
     background-color: #ddd;
     color: black;
 }
+#move:active{
+    background-color: #4CAF50;
+}
 
+#loc-buttons{
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 50%;
+}
+
+#loader-div{
+    height: 590px;
+    width: 100%;
+}
+.loader {
+    margin-top: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 50%;
+    border: 16px solid green; 
+    border-top: 16px solid lightgreen; 
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

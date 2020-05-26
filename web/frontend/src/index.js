@@ -6,6 +6,7 @@ import * as serviceWorker from './serviceWorker';
 
 
 document.body.style.margin =  "0px";
+document.body.overflow = "hidden";
 ReactDOM.render(
   <BrowserRouter >
     <App />

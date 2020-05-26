@@ -15,21 +15,13 @@
 * Location: Melbourne    
 *   
 */
-import React from 'react'
-import './Colourbar.css'
-
-const ColourBar = () => {
-    return (
-        <div>
-            <div id='bar_container'>
-                <p id='title'>Installation per Tweet</p>
-                <div id='gradient'></div> 
-                <p id='lower'>Lower</p>
-                <p id='higher'>Higher</p>
-            </div>
-        </div>
-    )
+p {
+    font-family: 'Montserrat', sans-serif;
 }
 
-
-export default ColourBar;
+#table_container {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 50%;
+}
+::-webkit-scrollbar {display:none;}

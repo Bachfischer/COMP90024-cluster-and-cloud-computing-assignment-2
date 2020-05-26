@@ -1,3 +1,20 @@
+/*
+*    
+* Part of Assignment 2 - COMP90024 course at The University of Melbourne     
+*    
+* Cluster and Cloud Computing - Team 24     
+*     
+* Authors:     
+*    
+*  * Liam Simon (Student ID: 1128453)    
+*  * Rejoy Benjamin (Student ID: 1110935)    
+*  * Parikshit Diwan (Student ID: 1110497)    
+*  * Colin McLean (Student ID: 1139518)    
+*  * Matthias Bachfischer (Student ID: 1133751)    
+*    
+* Location: Melbourne    
+*   
+*/
 import React from 'react';
 import { compose, withProps } from "recompose"
 import { 
@@ -8,6 +25,7 @@ import {
   } from "react-google-maps"
 
 import ColourBar from '../components/Colourbar'
+import DataTable from '../components/DataTable'
 let counter = 0
 class MapSetup extends React.Component {
   constructor(props) {
@@ -15,7 +33,9 @@ class MapSetup extends React.Component {
     this.state = { 
       counter: 0,
       regions: null,
-      centre:{ lat:  -38.0,lng: 145.1} };
+      initital: null,
+      centre:{ lat:  -35.037633,lng: 144.739408} 
+    }
   }
   Map = compose(
       withProps({
@@ -28,7 +48,7 @@ class MapSetup extends React.Component {
       withGoogleMap
       )((props) => 
         <GoogleMap
-          defaultZoom={9}
+          defaultZoom={7}
           defaultCenter={this.state.centre}
         >
           {this.renderRegions()}
@@ -61,33 +81,20 @@ class MapSetup extends React.Component {
         }
         coordArrOuter.push(coordArrInner)
       })
-      
       let num = Math.floor(regionJ.properties.ratio)
+      num = 255 -num
       let red,blue,green = 0
-      if(num <= 255){
-        red = num
-        green = 0
-        blue = 255
+      if(num < 16){
+        green = '0'.concat(num.toString(16))
+        blue = '0'.concat(num.toString(16))
       }
       else{
-        red = 255
-        green = 0
-        blue = 255-(num-255)
+        green = num.toString(16)
+        blue = num.toString(16)
       }
-      if(red<16){
-        red ='0'.concat(green.toString(16))
-      }
-      else{
-        red = red.toString(16)
-      }
-      if(blue<16){
-        blue ='0'.concat(green.toString(16))
-      }
-      else{
-        blue = blue.toString(16)
-      }
-      green ='0'.concat(green.toString(16))
+      red = 'ff'
       let colour = '#'.concat(red).concat(green).concat(blue)
+      console.log(regionJ._id,regionJ.properties.ratio)
       console.log(colour)
       if(coordArrOuter[0] instanceof(Array)){
         return (
@@ -96,11 +103,11 @@ class MapSetup extends React.Component {
             key = {counter++}
             paths ={coord}
             options={{
-              strokeColor: colour,
-              strokeOpacity: 1,
-              strokeWeight: 2,
+              strokeColor: '000000',
+              strokeOpacity: 5,
+              strokeWeight: 1,
               fillColor: colour,
-              fillOpacity: 0.35,
+              fillOpacity: 0.8,
               icons: [{
                 icon: "hello",
                 offset: '0',
@@ -119,11 +126,11 @@ class MapSetup extends React.Component {
             key = {counter++}
             paths ={coord}
             options={{
-              strokeColor: colour,
-              strokeOpacity: 1,
-              strokeWeight: 2,
+              strokeColor: '000000',
+              strokeOpacity: 5,
+              strokeWeight: 1,
               fillColor: colour,
-              fillOpacity: 0.35,
+              fillOpacity: 0.8,
               icons: [{
                 icon: "hello",
                 offset: '0',
@@ -150,7 +157,8 @@ class MapSetup extends React.Component {
     let text = await message.json()
     console.log(text)
     this.find_ratio(text)
-  }
+    let init = JSON.parse(JSON.stringify(text))
+    this.setState({initial: init})}
 
   async find_ratio(pcs){
     let suburbs = await pcs
@@ -165,17 +173,15 @@ class MapSetup extends React.Component {
       if(temp_ratio < min_ratio){
         min_ratio = temp_ratio 
       }
-      pc_ratio.push([suburb._id,temp_ratio])
+    pc_ratio.push([suburb._id,suburb.properties.ratio])
     })
-    console.log(pc_ratio)
     pc_ratio.forEach(pc =>{
-      let z = 510 *((pc[1]/(max_ratio)))
-      if(z != 0){
-        console.log(z)
-      }
-      
+      let top = pc[1] - min_ratio
+      let bottom = max_ratio - min_ratio
+      let z = 255*(top/bottom)
       pc[1] = z
     })
+    console.log(pc_ratio)
     suburbs.forEach(suburb =>{
       pc_ratio.forEach(pc =>{
         let id = suburb._id
@@ -206,12 +212,25 @@ class MapSetup extends React.Component {
     this.delayedShowMarker()
   }
   render(){
-    return(
-      <div>
-        <div>{this.state.regions && <this.Map/>}</div>
-        <ColourBar/>
-      </div>
-    )
+    if(this.state.regions && this.state.initial){
+      return(
+        <div>
+          <div>
+            <div>{this.state.regions && <this.Map/>}</div>
+          </div>
+          <div>
+            <ColourBar/>
+            <DataTable regions={ this.state.initial}/>
+          </div>
+        </div>
+      )
+    }
+    else{
+      return(
+        <div>
+        </div>
+      )
+    }
   }
 
 }

@@ -1,5 +1,4 @@
 import React from 'react';
-import './Main.css';
 import { Switch, Route } from 'react-router-dom'
 
 import HomePage from '../containers/HomePage'

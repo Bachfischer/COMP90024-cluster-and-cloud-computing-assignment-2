@@ -15,7 +15,7 @@
 * Location: Melbourne    
 *   
 */
-import React from 'react';
+import React, { useState } from 'react';
 import { compose, withProps } from "recompose"
 import { 
   Polygon,
@@ -29,11 +29,11 @@ import DataTable from '../components/DataTable'
 import '../components/Home.css'
 
 let locations = [
-  ["Sydney",-33.87,151.20],
-  ["Melbourne", -38.0,145.1],
-  ["Adelaide",-34.92,138.6],
-  ["Canberra",-35.28,149.13],
-  ["Brisbane",-27.46,153.02]
+  ["Sydney",-33.87,151.20,0],
+  ["Melbourne", -38.0,145.1,2],
+  ["Adelaide",-34.92,138.6,3],
+  ["Canberra",-35.28,149.13,1],
+  ["Brisbane",-27.46,153.02,4]
 ]
 let counter = 0
 class MapSetup extends React.Component {
@@ -42,8 +42,9 @@ class MapSetup extends React.Component {
     this.state = { 
       counter: 0,
       regions: null,
+      cities: null,
       initial: null,
-      centre:{ lat:  -38.0,lng: 145.1} ,
+      centre:{coord:{ lat:  -38.0,lng: 145.1},area:2} ,
       change: false
     };
   }
@@ -59,24 +60,15 @@ class MapSetup extends React.Component {
       )((props) => 
         <GoogleMap
           defaultZoom={9}
-          center={this.state.centre}
-          onGoogleApiLoaded={({ map,maps}) => this.apiIsLoaded(map,maps)}
+          center={this.state.centre.coord}
         >
-          {console.log(this.state.centre)}
+          {console.log(this.state.centre.coord)}
           {this.renderRegions()}
         </GoogleMap>
       )
-  apiIsLoaded(map,maps){
-    console.log(map)
-    if(map){
-      map.panTo(this.state.centre)
-    }
-  }
   renderRegions(){
-    return this.state.regions.map(regionJ =>{
-      if(regionJ._id > 10000){
-        return(<Polygon key={counter++}/>)
-      }
+    return this.state.cities[this.state.centre.area].map(regionJ =>{
+      console.log(this.state.centre.area)
       //let region = JSON.parse(JSON.stringify(regionJ))
       let coordinates = regionJ.geometry.coordinates
       let coordArrOuter = []
@@ -162,7 +154,7 @@ class MapSetup extends React.Component {
 
   }
   async get_all(){
-    let message = await fetch("http://localhost:4000/get_all_suburbs?city=melbourne")
+    let message = await fetch("http://localhost:4000/get_all_suburbs")
     let text = await message.json()
     console.log(text)
     this.find_ratio(text)
@@ -172,64 +164,93 @@ class MapSetup extends React.Component {
 
   async find_ratio(pcs){
     let suburbs = await pcs
-    let min_ratio = 1000000
-    let max_ratio = 0
-    let pc_ratio = []
+    let split_suburbs = [[],[],[],[],[]]
     suburbs.forEach(suburb=>{
-
-    })
-    suburbs.forEach(suburb =>{
-      let temp_ratio = suburb.properties.ratio
-      if(temp_ratio > max_ratio){
-        max_ratio = temp_ratio 
+      let id = suburb._id
+      if((id >=2000 && id <=2599)||(id >= 2619 && id<=2899)||(id >= 2921 && id<=2999)){
+        split_suburbs[0].push(suburb)
       }
-      if(temp_ratio < min_ratio){
-        min_ratio = temp_ratio 
+      else if((id >= 2600 && id<=2618)||(id >= 2900 && id<=2920)){
+        split_suburbs[1].push(suburb)
       }
-      pc_ratio.push([suburb._id,temp_ratio])
+      else if((id >= 3000 && id<=3999)){
+        split_suburbs[2].push(suburb)
+      }
+      else if((id >= 4000 && id<=4999)){
+        split_suburbs[3].push(suburb)
+      }
+      else if((id >= 5000 && id<=5999)){
+        split_suburbs[4].push(suburb)
+      }
     })
-    pc_ratio.forEach(pc =>{
-      let z = 255 *((pc[1]/(max_ratio)))
-      pc[1] = z
-    })
-    suburbs.forEach(suburb =>{
-      pc_ratio.forEach(pc =>{
-        let id = suburb._id
-        if(id === pc[0]){
-          suburb.properties.ratio = pc[1]
+    let counter = 0
+    split_suburbs.forEach(city =>{
+      console.log(city)
+      let min_ratio = 1000000
+      let max_ratio = 0
+      let pc_ratio = []
+      city.forEach(suburb =>{
+        let temp_ratio = suburb.properties.ratio
+        if(temp_ratio > max_ratio){
+          max_ratio = temp_ratio 
         }
+        if(temp_ratio < min_ratio){
+          min_ratio = temp_ratio 
+        }
+        pc_ratio.push([suburb._id,temp_ratio])
+      })
+      pc_ratio.forEach(pc =>{
+        let z = 255 *((pc[1]/(max_ratio)))
+        pc[1] = z
+      })
+      split_suburbs[counter].forEach(suburb =>{
+        pc_ratio.forEach(pc =>{
+          let id = suburb._id
+          if(id === pc[0]){
+            suburb.properties.ratio = pc[1]
+          }
+        })
       })
     })
-    this.setState({regions: suburbs})
+    this.setState({cities: split_suburbs},console.log(this.setState.cities))
   }
 
   async componentDidMount() {
       //this.callAPI();
       this.get_all();
   }
-  async changeLocation(location){
-    this.setState({initial: null})
-    console.log("here")
-    let message = await fetch("http://localhost:4000/get_all_suburbs?city=" +location.toLowerCase())
-    let text = await message.json()
-    console.log(text)
-    this.find_ratio(text)
-    let init = JSON.parse(JSON.stringify(text))
-    this.setState({initial: init})
+  /*
+  changeCentre = (update_lat,update_lng) => {
+    console.log(update_lat,update_lng)
+      this.setState({
+        centre:{ lat:  update_lat,lng: update_lng} ,
+        change: true
+      },() => 
+      console.log(this.state.centre))
+  }
+  */
+  delayedShowMarker = () => {
+    setTimeout(() => {
+      this.setState({ isMarkerShown: true })
+    }, 3000)
+  }
+
+  handleMarkerClick = () => {
+    this.setState({ isMarkerShown: false })
+    this.delayedShowMarker()
   }
   render(){
-    if(this.state.initial && this.state.regions){ 
+    if(this.state.initial && this.state.cities){ 
       if(this.state.change === false){
         return(
           <div>
             <div id='wrapper'>
-            <div id="map">{ this.state.regions && <this.Map/>}</div>
+            <div id="map">{ this.state.cities && <this.Map/>}</div>
             <div id="loc-buttons">
               {locations.map(location =>{
                 return(
                   <button id="move" onClick={() =>{
-                    this.setState({centre:{ lat:  location[1],lng: location[2]} ,change: true,});
-                    this.changeLocation(location[0])}}
+                    this.setState({centre:{coord:{ lat:  location[1],lng: location[2]},area: location[3]} ,change: true,})}}
                   >
                     {location[0]}
                   </button>
@@ -251,7 +272,7 @@ class MapSetup extends React.Component {
             <div id="loc-buttons">
               {locations.map(location =>{
                 return(
-                  <button id='move' onClick={() =>{
+                  <button id={location[0]} onClick={() =>{
                     this.setState({centre:{ lat:  location[1],lng: location[2]} ,change: true,})}}
                   >
                     {location[0]}
@@ -269,21 +290,6 @@ class MapSetup extends React.Component {
     else{
         return(
           <div id="big-body">
-            <div id='loader-div'>
-              <div class='loader'></div>
-            </div>
-            <div id="loc-buttons">
-              {locations.map(location =>{
-                return(
-                  <button id='move' onClick={() =>{
-                    this.setState({centre:{ lat:  location[1],lng: location[2]} ,change: true,})}}
-                  >
-                    {location[0]}
-                  </button>
-                )
-              })}
-            </div>
-            <ColourBar/>
           </div>
         )
     }

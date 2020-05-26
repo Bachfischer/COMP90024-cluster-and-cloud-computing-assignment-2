@@ -12,13 +12,13 @@ ip = "http://admin:data-miner!@172.26.133.36:5984"
 const nano = require("nano")(ip);
 
 router.get("/",async function(req, res, next){
+    console.log(req.query.city)
     
     var shape = [] 
     let id = req.query.id;
     var db = nano.use('postcode_aurin')
-    await db.view("get_all","suburbs").then((body) => {
+    await db.view("get_all",req.query.city).then((body) => {
         body.rows.forEach((doc) => {
-            console.log(doc.value);
             shape.push(doc.value);
         });
     });
