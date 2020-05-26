@@ -5,11 +5,11 @@ The system can be accessed via the following URL:
 
 **Web App:** 
 
-[Environmental Sustainability Tweet Analysis](http://172.26.130.40/)
+[Environmental Sustainability Tweet Analysis](http://172.26.130.40/) (requires active connection Unimelb VPN)
 
 **YouTube:**
 
-[TBD]()
+[Video of web-based data visualization tool](https://youtu.be/7oCPjouVqUs)
 
 
 ### Submission Details
