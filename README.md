@@ -1,6 +1,17 @@
 # Cluster and Cloud Computing - Assignment 2 (Team 24)
 This repository contains the source code for assignment 2 of the COMP90024 Cluster and Cloud Computing course at the University of Melbourne.
 
+The system can be accessed via the following URL: 
+
+**Web App:** 
+
+[Environmental Sustainability Tweet Analysis](http://172.26.130.40/)
+
+**YouTube:**
+
+[TBD]()
+
+
 ### Submission Details
 
 **Team members:**
@@ -16,7 +27,7 @@ This repository contains the source code for assignment 2 of the COMP90024 Clust
 - Parikshit Diwan (Student ID: 1110497)
 
 **Tean location:** Melbourne
-  
+
 
 ## Project structure
 
