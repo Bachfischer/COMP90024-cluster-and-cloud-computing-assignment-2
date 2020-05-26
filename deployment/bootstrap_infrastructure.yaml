@@ -20,9 +20,9 @@
   gather_facts: true
 
   roles:
-#    - role: openstack-volume
-#    - role: openstack-security-group
-#    - role: openstack-instance
+    - role: openstack-volume
+    - role: openstack-security-group
+    - role: openstack-instance
 
 # Install Docker and CouchDB
 - hosts: DataNodes
@@ -31,10 +31,10 @@
   gather_facts: true
 
   roles:
-#    - role: nodes-common
-#    - role: nodes-docker-install
-#    - role: nodes-volume-mount
-#    - role: couchdb-setup
+    - role: nodes-common
+    - role: nodes-docker-install
+    - role: nodes-volume-mount
+    - role: couchdb-setup
 
  # Perform CouchDB configuration on all hosts except Masternode
 - hosts: DataNodes:!Masternode
@@ -43,7 +43,7 @@
   gather_facts: true
 
   roles:
-#    - role: couchdb-finish-setup
+    - role: couchdb-finish-setup
 
 
 # Install Twitter Harvester on all hosts
@@ -53,7 +53,7 @@
   gather_facts: true
 
   roles:
-#        - role: twitter-harvester-setup
+     - role: twitter-harvester-setup
 
 
 # Install data analytics scripts and React frontend
@@ -63,6 +63,9 @@
   gather_facts: true
 
   roles:
-    - aurin-twitter-analytics-setup
-#    - role: gps-processing-setup
-#    - role: frontend-setup
+    - role: nodes-common
+    - role: nodes-docker-install
+    - role: nodes-volume-mount
+    - role: aurin-twitter-analytics-setup
+    - role: gps-processing-setup
+    - role: frontend-setup
