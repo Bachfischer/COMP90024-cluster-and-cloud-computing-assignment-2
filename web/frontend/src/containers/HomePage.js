@@ -174,7 +174,7 @@ class MapSetup extends React.Component {
 
   }
   async get_all(){
-    let message = await fetch("http://localhost:4000/get_all_cities")
+    let message = await fetch("http://172.26.130.40:8000/get_all_cities")
     let text = await message.json()
     console.log(text)
     this.find_ratio(text)
