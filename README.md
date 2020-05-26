@@ -9,7 +9,7 @@ The system can be accessed via the following URL:
 
 **YouTube:**
 
-[Video of web-based data visualization tool](https://youtu.be/7oCPjouVqUs)
+[Walkthrough of visualization tool](https://youtu.be/7oCPjouVqUs) 
 
 
 ### Submission Details
