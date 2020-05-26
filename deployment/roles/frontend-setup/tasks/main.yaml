@@ -40,7 +40,7 @@
 - name: Configure compose
   become: yes
   template:
-    src: "{{ playbook_dir }}/../../web/docker-compose.yaml.j2"
+    src: "{{ playbook_dir }}/../web/docker-compose.yaml.j2"
     dest: "~/cluster-and-cloud-computing-assignment-2/web/docker-compose.yaml"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"

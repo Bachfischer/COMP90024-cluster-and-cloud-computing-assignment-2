@@ -154,7 +154,7 @@ class MapSetup extends React.Component {
 
   }
   async get_all(){
-    let message = await fetch("http://localhost:4000/get_all_suburbs?city=melbourne")
+    let message = await fetch("http://172.26.130.40:8000/get_all_suburbs?city=melbourne")
     let text = await message.json()
     console.log(text)
     this.find_ratio(text)
@@ -201,7 +201,7 @@ class MapSetup extends React.Component {
   }
   async changeLocation(location){
     this.setState({initial: null})
-    let message = await fetch("http://localhost:4000/get_all_suburbs?city=" +location.toLowerCase())
+    let message = await fetch("http://172.26.130.40:8000/get_all_suburbs?city=" +location.toLowerCase())
     let text = await message.json()
     console.log(text)
     this.find_ratio(text)
